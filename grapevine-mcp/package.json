@@ -1,0 +1,19 @@
+{
+  "name": "grapevine-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for interacting with Grapevine API using x402 payments",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node basic-test.js || true"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "x402-fetch": "^0.7.0",
+    "viem": "^2.21.54",
+    "dotenv": "^16.4.5"
+  },
+  "author": "engineering@pinata.cloud",
+  "license": "MIT"
+}

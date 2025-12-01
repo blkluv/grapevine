@@ -1,0 +1,40 @@
+{
+  "buildCommand": "pnpm run build",
+  "framework": "vite",
+  "redirects": [
+    {
+      "source": "/.well-known/farcaster.json",
+      "destination": "https://api.farcaster.xyz/miniapps/hosted-manifest/019abd15-605f-988e-42f2-18c545665afb",
+      "statusCode": 307
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/:path((?!assets/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://gateway.grapevine.fyi https://grapevine.dev-mypinata.cloud https://grapevine-assets.mypinata.cloud https://imagedelivery.net; font-src 'self'; media-src 'self' blob: https://live.powerhitz.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://farcaster.xyz https://*.farcaster.xyz; child-src https://auth.privy.io https://privy.grapevine.markets https://verify.walletconnect.com https://verify.walletconnect.org; frame-src blob: https://auth.privy.io https://privy.grapevine.markets https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com; connect-src 'self' https://auth.privy.io https://privy.grapevine.markets wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com https://grapevine-api.devpinata.cloud https://api.grapevine.fyi https://api.grapevine.markets https://api.relay.link https://api.testnets.relay.link https://grapevine.dev-mypinata.cloud https://gateway.grapevine.fyi https://grapevine-assets.mypinata.cloud https://live.powerhitz.com https://api.farcaster.xyz; worker-src 'self'; manifest-src 'self'"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    }
+  ]
+}

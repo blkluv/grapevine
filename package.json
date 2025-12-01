@@ -1,0 +1,41 @@
+{
+  "name": "grapevine",
+  "version": "0.1.9",
+  "private": true,
+  "description": "Decentralized Data Feeds Platform - Monorepo",
+  "packageManager": "pnpm@10.22.0",
+  "workspaces": [
+    "grapevine-api",
+    "grapevine-client",
+    "grapevine-mcp"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=grapevine-api",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
+    "install:all": "npm install",
+    "clean": "rm -rf node_modules && rm -rf grapevine-api/node_modules",
+    "sync-types": "node sync-types.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PinataCloud/grapevine.git"
+  },
+  "keywords": [
+    "blockchain",
+    "data-feeds",
+    "web3",
+    "api",
+    "decentralized",
+    "ipfs",
+    "prediction-markets"
+  ],
+  "author": "engineering@pinata.cloud",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}

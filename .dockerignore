@@ -1,0 +1,27 @@
+# Node modules (will be installed during build)
+**/node_modules
+**/dist
+
+# Environment files
+**/.env*
+!**/.env.example
+
+# Test and coverage
+**/coverage
+**/.vitest
+
+# Exclude other workspaces (not needed for grapevine-api)
+grapevine-frontend/
+grapevine-client/
+
+# Exclude git and CI files
+.git/
+.github/
+.gitignore
+
+# Exclude documentation
+*.md
+!grapevine-api/README.md
+
+# Exclude test files (not needed in Docker build)
+grapevine-api/test/

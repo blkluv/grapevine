@@ -1,0 +1,2606 @@
+/**
+ * This file was auto-generated from the grapevine-api OpenAPI spec.
+ * Do not make direct changes to this file.
+ *
+ * To update these types, run: npm run sync-types
+ *
+ * Last updated: 2025-11-13T01:53:06.961Z
+ */
+
+export interface paths {
+    "/v1/auth/nonce": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate authentication nonce
+         * @description Generate a nonce for wallet signature authentication. The nonce expires after 5 minutes and can only be used once.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description Ethereum wallet address (0x prefixed) */
+                        wallet_address: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Nonce generated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @description Random nonce to be included in signature message */
+                            nonce: string;
+                            /** @description Complete message to sign with wallet */
+                            message: string;
+                            /** @description Unix timestamp (milliseconds) when nonce expires */
+                            expiresAt: number;
+                        };
+                    };
+                };
+                /** @description Invalid wallet address format */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/wallets/{wallet_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get wallet by ID
+         * @description Retrieve detailed information about a specific wallet by its unique identifier
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    wallet_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Wallet details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            id: string;
+                            wallet_address: string;
+                            /** @enum {string} */
+                            wallet_address_network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
+                            username: string | null;
+                            /** Format: uri */
+                            picture_url: string | null;
+                        };
+                    };
+                };
+                /** @description Wallet not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update wallet
+         * @description Update wallet properties including username and picture_url. Users can only update their own wallet. Requires wallet authentication via x-auth headers.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
+                };
+                path: {
+                    wallet_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        username?: string;
+                        /** Format: uri */
+                        picture_url?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Wallet updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            id: string;
+                            wallet_address: string;
+                            /** @enum {string} */
+                            wallet_address_network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
+                            username: string | null;
+                            /** Format: uri */
+                            picture_url: string | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized - signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - you can only update your own wallet */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Wallet not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v1/wallets/address/{address}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get wallet by address
+         * @description Retrieve detailed information about a specific wallet by its Ethereum wallet address (0x-prefixed, 42 characters)
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    address: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Wallet details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            id: string;
+                            wallet_address: string;
+                            /** @enum {string} */
+                            wallet_address_network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
+                            username: string | null;
+                            /** Format: uri */
+                            picture_url: string | null;
+                        };
+                    };
+                };
+                /** @description Wallet not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/wallets/{wallet_id}/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Retrieve comprehensive statistics for a specific wallet including provider and buyer metrics */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    wallet_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Wallet statistics */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            wallet_id: string;
+                            total_feeds_created: number;
+                            total_entries_published: number;
+                            total_revenue_earned: string;
+                            total_items_sold: number;
+                            unique_buyers_count: number;
+                            total_purchases_made: number;
+                            total_amount_spent: string;
+                            unique_feeds_purchased_from: number;
+                            revenue_rank: number | null;
+                            purchases_rank: number | null;
+                            last_calculated_at: number;
+                        };
+                    };
+                };
+                /** @description Wallet stats not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List categories
+         * @description Retrieve a cursor-paginated list of all categories with optional filtering by active status and search term. Results are ordered by name ASC (alphabetically). Categories are pre-defined in the system and cannot be created via API.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    page_token?: string;
+                    is_active?: "true" | "false";
+                    search?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of categories with cursor pagination */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                created_at: number;
+                                updated_at: number;
+                                /** Format: uuid */
+                                id: string;
+                                name: string;
+                                description: string | null;
+                                /** Format: uri */
+                                icon_url: string | null;
+                                is_active: boolean;
+                            }[];
+                            pagination: {
+                                page_size: number;
+                                next_page_token: string | null;
+                                has_more: boolean;
+                            };
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/categories/{category_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get category by ID
+         * @description Retrieve detailed information about a specific category by its unique identifier
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    category_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Category details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            description: string | null;
+                            /** Format: uri */
+                            icon_url: string | null;
+                            is_active: boolean;
+                        };
+                    };
+                };
+                /** @description Category not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List feeds
+         * @description Retrieve a cursor-paginated list of data feeds with optional filtering by owner, category, tags, entry count, age, and active status. Defaults to showing only active feeds. Results are ordered by created_at DESC (newest first).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    page_token?: string;
+                    owner_id?: string;
+                    category?: string;
+                    tags?: string;
+                    min_entries?: string;
+                    min_age?: string;
+                    max_age?: string;
+                    is_active?: "true" | "false";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of feeds with cursor pagination */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                owner_id: string;
+                                /** Format: uuid */
+                                category_id: string | null;
+                                name: string;
+                                description: string | null;
+                                image_cid: string | null;
+                                is_active: boolean;
+                                total_entries: number;
+                                total_purchases: number;
+                                total_revenue: string;
+                                tags: string[] | null;
+                                created_at: number;
+                                updated_at: number;
+                                owner_wallet_address: string;
+                            }[];
+                            pagination: {
+                                page_size: number;
+                                next_page_token: string | null;
+                                has_more: boolean;
+                            };
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create feed
+         * @description Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-payment headers.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description X402 Payment header for payment verification */
+                    "x-payment": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        category_id?: string;
+                        name: string;
+                        description?: string;
+                        image_url?: string;
+                        tags?: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Feed created with database-generated UUID */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            owner_id: string;
+                            /** Format: uuid */
+                            category_id: string | null;
+                            name: string;
+                            description: string | null;
+                            image_cid: string | null;
+                            is_active: boolean;
+                            total_entries: number;
+                            total_purchases: number;
+                            total_revenue: string;
+                            tags: string[] | null;
+                            created_at: number;
+                            updated_at: number;
+                            owner_wallet_address: string;
+                        };
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Unauthorized - signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - maximum feed limit reached or invalid wallet network */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Service unavailable - failed to create storage group */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feeds/{feed_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get feed by ID
+         * @description Retrieve detailed information about a specific data feed by its unique identifier, including statistics, owner wallet address, and metadata
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    feed_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Feed details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            owner_id: string;
+                            /** Format: uuid */
+                            category_id: string | null;
+                            name: string;
+                            description: string | null;
+                            image_cid: string | null;
+                            is_active: boolean;
+                            total_entries: number;
+                            total_purchases: number;
+                            total_revenue: string;
+                            tags: string[] | null;
+                            created_at: number;
+                            updated_at: number;
+                            owner_wallet_address: string;
+                        };
+                    };
+                };
+                /** @description Feed not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete feed
+         * @description Soft delete a feed and all its associated entries by setting is_active to false. The feed and entry records remain in the system but will no longer appear in active feed listings.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    feed_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Feed deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Feed not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update feed
+         * @description Update the properties of an existing feed including category, name, description, image_cid, active status, and tags. Requires wallet authentication and feed ownership verification via x-auth headers.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
+                };
+                path: {
+                    feed_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        category_id?: string;
+                        name?: string;
+                        description?: string;
+                        image_cid?: string;
+                        is_active?: boolean;
+                        tags?: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Feed updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            owner_id: string;
+                            /** Format: uuid */
+                            category_id: string | null;
+                            name: string;
+                            description: string | null;
+                            image_cid: string | null;
+                            is_active: boolean;
+                            total_entries: number;
+                            total_purchases: number;
+                            total_revenue: string;
+                            tags: string[] | null;
+                            created_at: number;
+                            updated_at: number;
+                            owner_wallet_address: string;
+                        };
+                    };
+                };
+                /** @description Bad Request - invalid category_id */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Unauthorized - signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - wallet does not own this feed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Feed not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v1/feeds/{feed_id}/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List feed entries
+         * @description Retrieve a cursor-paginated list of all entries (messages) published to a specific feed, with optional filtering by free/paid status. Only returns active entries (is_active=true). Results are ordered by ID DESC (newest first).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    page_token?: string;
+                    is_free?: "true" | "false";
+                };
+                header?: never;
+                path: {
+                    feed_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of feed entries with cursor pagination */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                created_at: number;
+                                updated_at: number;
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                feed_id: string;
+                                cid: string;
+                                mime_type: string;
+                                /** Format: uuid */
+                                pinata_upload_id: string | null;
+                                title: string | null;
+                                description: string | null;
+                                metadata: string | null;
+                                tags: string[] | null;
+                                is_free: boolean;
+                                expires_at: number | null;
+                                /** Format: uuid */
+                                piid: string | null;
+                                is_active: boolean;
+                                total_purchases: number;
+                                total_revenue: string;
+                            }[];
+                            pagination: {
+                                page_size: number;
+                                next_page_token: string | null;
+                                has_more: boolean;
+                            };
+                        };
+                    };
+                };
+                /** @description Feed not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create feed entry
+         * @description Publish a new entry (message) to a specific feed. Content is provided as base64 and uploaded to IPFS via Pinata. Automatically creates payment instructions (paid or free) and enforces maximum entry limit per feed. Requires wallet authentication and feed ownership verification.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description X402 Payment header for payment verification */
+                    "x-payment": string;
+                };
+                path: {
+                    feed_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        content_base64: string;
+                        mime_type: string;
+                        title?: string;
+                        description?: string;
+                        metadata?: string;
+                        tags?: string[];
+                        /** @default false */
+                        is_free?: boolean;
+                        expires_at?: number;
+                        price?: {
+                            amount: string;
+                            currency: string;
+                            /** @enum {string} */
+                            network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
+                        };
+                    };
+                };
+            };
+            responses: {
+                /** @description Entry created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            feed_id: string;
+                            cid: string;
+                            mime_type: string;
+                            /** Format: uuid */
+                            pinata_upload_id: string | null;
+                            title: string | null;
+                            description: string | null;
+                            metadata: string | null;
+                            tags: string[] | null;
+                            is_free: boolean;
+                            expires_at: number | null;
+                            /** Format: uuid */
+                            piid: string | null;
+                            is_active: boolean;
+                            total_purchases: number;
+                            total_revenue: string;
+                        };
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Unauthorized - signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - wallet does not own this feed or maximum entry limit reached */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Feed not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Conflict - entry with this CID already exists */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feeds/{feed_id}/entries/{entry_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get feed entry by ID
+         * @description Retrieve detailed information about a specific entry within a feed, including its IPFS CID, metadata, pricing, and statistics
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    feed_id: string;
+                    entry_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Feed entry details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created_at: number;
+                            updated_at: number;
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            feed_id: string;
+                            cid: string;
+                            mime_type: string;
+                            /** Format: uuid */
+                            pinata_upload_id: string | null;
+                            title: string | null;
+                            description: string | null;
+                            metadata: string | null;
+                            tags: string[] | null;
+                            is_free: boolean;
+                            expires_at: number | null;
+                            /** Format: uuid */
+                            piid: string | null;
+                            is_active: boolean;
+                            total_purchases: number;
+                            total_revenue: string;
+                        };
+                    };
+                };
+                /** @description Feed or entry not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete feed entry
+         * @description Soft delete an entry from a feed by setting is_active to false. The entry record and IPFS content remain in the system but the entry will no longer appear in feed listings. Requires wallet authentication and feed ownership verification.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
+                };
+                path: {
+                    feed_id: string;
+                    entry_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Entry deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthorized - signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - wallet does not own this feed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Feed or entry not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feeds/{feed_id}/entries/{entry_id}/access-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create private access link for entry
+         * @description Creates a time-limited presigned URL for accessing a private feed entry. Requires wallet signature authentication to verify the user is authorized.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
+                };
+                path: {
+                    /** @description Feed UUID */
+                    feed_id: string;
+                    /** @description Entry UUID */
+                    entry_id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            responses: {
+                /** @description Access link created successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /**
+                             * Format: uri
+                             * @description Presigned URL for private file access
+                             */
+                            url: string;
+                            /** @description Unix timestamp when the link expires */
+                            expires_at: number;
+                        };
+                    };
+                };
+                /** @description Unauthorized - wallet signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Entry not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List transactions
+         * @description Retrieve a cursor-paginated list of transactions with optional filtering by payer, pay_to, or entry_id. Results are ordered by ID DESC (newest first). Public endpoint - no authentication required.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    page_token?: string;
+                    /** @description Filter by payer wallet address */
+                    payer?: string;
+                    /** @description Filter by pay_to wallet address */
+                    pay_to?: string;
+                    /** @description Filter by feed entry ID */
+                    entry_id?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of transactions with cursor pagination */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                piid: string | null;
+                                payer: string;
+                                pay_to: string;
+                                amount: string;
+                                asset: string;
+                                /** Format: uuid */
+                                entry_id: string | null;
+                                transaction_hash: string;
+                                created_at: number;
+                            }[];
+                            pagination: {
+                                page_size: number;
+                                next_page_token: string | null;
+                                has_more: boolean;
+                            };
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create transactions (bulk insert)
+         * @description Creates x402 transaction records in bulk. Accepts array of transaction log data from x402 payment events. Automatically resolves entry_id from CID, validates all fields, and filters to only settled transactions. Requires admin authentication via admin-api-key header.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Admin API key for server-to-server authentication */
+                    "admin-api-key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        timestamp: number;
+                        root_cid?: string | null;
+                        location_data?: {
+                            colo?: string;
+                            country?: string;
+                            city?: string;
+                            region?: string;
+                            timezone?: string;
+                            asn?: number;
+                            as_organization?: string;
+                        } | null;
+                        x402_data?: {
+                            verified?: boolean;
+                            settled?: boolean;
+                            scheme?: string;
+                            network?: string;
+                            payer?: string;
+                            asset?: string;
+                            transaction?: string;
+                            x402_version?: string | number;
+                            /** Format: uuid */
+                            payment_instruction_id?: string;
+                            pay_to?: string;
+                            amount?: number | string;
+                            /** Format: uuid */
+                            paymentInstructionId?: string;
+                            payTo?: string;
+                        } | null;
+                        request?: {
+                            method?: string;
+                            url?: string;
+                            pathname?: string;
+                            hostname?: string;
+                            search?: string;
+                            user_agent?: string | null;
+                            forwarded_for?: string | null;
+                            real_ip?: string | null;
+                            referer?: string | null;
+                        };
+                        response?: {
+                            status?: number;
+                            headers?: {
+                                [key: string]: unknown;
+                            };
+                            size?: number | null;
+                            duration?: number | null;
+                            cached?: boolean;
+                            error?: string | null;
+                        } | null;
+                    }[];
+                };
+            };
+            responses: {
+                /** @description Transactions created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            created: number;
+                            transactions: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                piid: string | null;
+                                payer: string;
+                                pay_to: string;
+                                amount: string;
+                                asset: string;
+                                /** Format: uuid */
+                                entry_id: string | null;
+                                transaction_hash: string;
+                                created_at: number;
+                            }[];
+                        };
+                    };
+                };
+                /** @description No Content - no x402_data present or no valid settled transactions to create */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad request - validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Unauthorized - admin API key verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/transactions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get transaction by ID
+         * @description Retrieve a specific transaction by its UUID. Public endpoint - no authentication required.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Transaction UUID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Transaction details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            piid: string | null;
+                            payer: string;
+                            pay_to: string;
+                            amount: string;
+                            asset: string;
+                            /** Format: uuid */
+                            entry_id: string | null;
+                            transaction_hash: string;
+                            created_at: number;
+                        };
+                    };
+                };
+                /** @description Transaction not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/transactions/hash/{hash}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get transaction by hash
+         * @description Retrieve a transaction by its blockchain transaction hash (0x-prefixed, 66 characters). Public endpoint - no authentication required.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Blockchain transaction hash (66 characters with 0x prefix) */
+                    hash: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Transaction details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            piid: string | null;
+                            payer: string;
+                            pay_to: string;
+                            amount: string;
+                            asset: string;
+                            /** Format: uuid */
+                            entry_id: string | null;
+                            transaction_hash: string;
+                            created_at: number;
+                        };
+                    };
+                };
+                /** @description Transaction not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/recent-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get recent entries
+         * @description Retrieve most recent feed entries across all active feeds with cursor-based pagination. Uses the gv_recent_entries view ordered by entry ID DESC.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    page_token?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of recent entries with pagination */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                created_at: number;
+                                updated_at: number;
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                feed_id: string;
+                                cid: string;
+                                mime_type: string;
+                                /** Format: uuid */
+                                pinata_upload_id: string | null;
+                                title: string | null;
+                                description: string | null;
+                                metadata: string | null;
+                                tags: string[] | null;
+                                price: string;
+                                asset: string;
+                                is_free: boolean;
+                                expires_at: number | null;
+                                /** Format: uuid */
+                                piid: string | null;
+                                feed_name: string;
+                                /** Format: uuid */
+                                feed_owner_id: string;
+                                owner_wallet: string;
+                                category_name: string;
+                            }[];
+                            pagination: {
+                                page_size: number;
+                                next_page_token: string | null;
+                                has_more: boolean;
+                            };
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/top-feeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get top feeds by entry count
+         * @description Retrieve top feeds ranked by total entry count (up to 100 results). Uses the gv_top_feeds view which includes all active feeds ordered by total_entries DESC.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of top feeds */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                owner_id: string;
+                                /** Format: uuid */
+                                category_id: string | null;
+                                name: string;
+                                description: string | null;
+                                image_cid: string | null;
+                                is_active: boolean;
+                                total_entries: number;
+                                total_purchases: number;
+                                total_revenue: string;
+                                tags: string[] | null;
+                                created_at: number;
+                                updated_at: number;
+                                owner_wallet: string;
+                                owner_username: string | null;
+                                category_name: string | null;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/top-revenue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get top revenue feeds
+         * @description Retrieve leaderboard of feeds ranked by total revenue (up to 100 results) using dynamic query with flexible time period filtering: 1d (last day), 7d (last 7 days), 30d (last 30 days), or all (all time). Includes transaction data joined from gv_transactions.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    period?: "1d" | "7d" | "30d" | "all";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Top revenue feeds leaderboard */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                rank: string;
+                                /** Format: uuid */
+                                feed_id: string;
+                                feed_name: string;
+                                /** Format: uuid */
+                                owner_id: string;
+                                owner_username: string | null;
+                                owner_wallet: string;
+                                /** Format: uuid */
+                                category_id: string | null;
+                                category_name: string;
+                                description: string | null;
+                                image_cid: string | null;
+                                is_active: boolean;
+                                tags: string[] | null;
+                                total_entries: number;
+                                total_purchases: string;
+                                total_revenue: string;
+                                unique_buyers: string;
+                                feed_created_at: number;
+                                feed_updated_at: number;
+                            }[];
+                            period: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/top-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get top providers by revenue
+         * @description Retrieve leaderboard of providers (feed owners) ranked by total revenue across all their feeds (up to 100 results) using dynamic query with flexible time period filtering: 1d, 7d, 30d, or all. Aggregates data from all feeds owned by each wallet.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    period?: "1d" | "7d" | "30d" | "all";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Top providers leaderboard */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                rank: string;
+                                /** Format: uuid */
+                                user_id: string;
+                                username: string | null;
+                                wallet_address: string;
+                                total_feeds: string;
+                                total_entries: string;
+                                total_purchases: string;
+                                total_revenue: string;
+                                unique_buyers: string;
+                                joined_at: number;
+                            }[];
+                            period: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/top-buyers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get top buyers by purchase count
+         * @description Retrieve leaderboard of most active buyers ranked by total purchase count (up to 100 results) using dynamic query with flexible time period filtering: 1d, 7d, 30d, or all. Joins wallet data with transaction records to calculate buyer statistics.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    period?: "1d" | "7d" | "30d" | "all";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Top buyers leaderboard */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                rank: string;
+                                /** Format: uuid */
+                                user_id: string;
+                                username: string | null;
+                                wallet_address: string;
+                                total_purchases: string;
+                                total_spent: string;
+                                unique_entries_purchased: string;
+                                unique_feeds_purchased_from: string;
+                                joined_at: number;
+                            }[];
+                            period: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/trending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get trending feeds
+         * @description Retrieve trending feeds based on revenue velocity in the last 7 days (up to 50 results). Uses the gv_leaderboard_trending_feeds view which calculates trending score from recent transaction activity.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Trending feeds leaderboard */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                rank: string;
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                owner_id: string;
+                                /** Format: uuid */
+                                category_id: string | null;
+                                name: string;
+                                description: string | null;
+                                image_cid: string | null;
+                                is_active: boolean;
+                                total_entries: number;
+                                total_purchases: number;
+                                total_revenue: string;
+                                tags: string[] | null;
+                                created_at: number;
+                                updated_at: number;
+                                owner_wallet: string;
+                                owner_username: string | null;
+                                category_name: string | null;
+                                purchases_last_7d: string;
+                                revenue_last_7d: string;
+                                unique_buyers_last_7d: string;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/most-popular": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get most popular feeds
+         * @description Retrieve most popular feeds ranked by total purchase count (up to 100 results) using dynamic query with flexible time period filtering: 1d, 7d, 30d, or all. Only includes feeds with at least 1 entry and at least 1 purchase. Calculates average revenue per purchase.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page_size?: string;
+                    period?: "1d" | "7d" | "30d" | "all";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Most popular feeds leaderboard */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                rank: string;
+                                /** Format: uuid */
+                                feed_id: string;
+                                feed_name: string;
+                                /** Format: uuid */
+                                owner_id: string;
+                                owner_username: string | null;
+                                owner_wallet: string;
+                                /** Format: uuid */
+                                category_id: string | null;
+                                category_name: string;
+                                description: string | null;
+                                image_cid: string | null;
+                                is_active: boolean;
+                                tags: string[] | null;
+                                total_entries: number;
+                                total_purchases: string;
+                                total_revenue: string;
+                                unique_buyers: string;
+                                avg_revenue_per_purchase: string | null;
+                                created_at: number;
+                                updated_at: number;
+                            }[];
+                            period: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/leaderboards/category-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get category statistics
+         * @description Retrieve comprehensive statistics for all categories, including total feeds, providers, entries, purchases, revenue, and unique buyers. Uses the gv_category_stats view ordered by total revenue DESC.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description List of category statistics ordered by total revenue descending */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                /** Format: uuid */
+                                category_id: string;
+                                category_name: string;
+                                category_description: string | null;
+                                /** Format: uri */
+                                category_icon_url: string | null;
+                                total_feeds: string;
+                                total_providers: string;
+                                total_entries: string;
+                                total_purchases: string;
+                                total_revenue: string;
+                                unique_buyers: string;
+                                avg_purchase_amount: string;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+}
+export type webhooks = Record<string, never>;
+export interface components {
+    schemas: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
+}
+export type $defs = Record<string, never>;
+export type operations = Record<string, never>;

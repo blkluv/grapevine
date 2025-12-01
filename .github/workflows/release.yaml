@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
+concurrency:
+  group: ci-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  changelog:
+    runs-on: github-runner
+    outputs:
+      release_created: ${{ steps.tag-release.outputs.release_created }}
+      releases_created: ${{ steps.tag-release.outputs.releases_created }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 📝 release changelog
+        uses: googleapis/release-please-action@v4
+        id: tag-release
+        with:
+          config-file: .github/release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  test:
+    timeout-minutes: 10
+    runs-on: github-runner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: 🧹 Clean pnpm cache and install dependencies
+        run: |
+          rm -rf node_modules pnpm-lock.yaml
+          rm -rf grapevine-api/node_modules
+          pnpm install
+      - name: 🚦 test grapevine-api
+        run: pnpm test --filter=grapevine-api
+
+  build:
+    needs:
+      - changelog
+    runs-on: github-runner
+    outputs:
+      docker_image_repository: ${{ steps.docker-build.outputs.docker_image_repository }}
+      docker_image_tag: ${{ steps.docker-build.outputs.docker_image_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 🐳 docker build grapevine-api
+        uses: PinataCloud/actions-private/docker-build@main
+        id: docker-build
+        with:
+          image_label: ${{ github.sha }}
+          docker_push: true
+          docker_password: ${{ secrets.GITHUB_TOKEN }}
+          docker_file: ./grapevine-api/Dockerfile
+          image_repository: pinatacloud/grapevine-api
+
+  deploy:
+    needs:
+      - changelog
+      - test
+      - build
+    runs-on: github-runner
+    environment: ${{ needs.changelog.outputs.release_created && 'prd' || 'dev' }}
+    steps:
+      - uses: PinataCloud/actions-private/update-workloads@v5
+        with:
+          docker_image_repository: ${{ needs.build.outputs.docker_image_repository }}
+          docker_image_tag: ${{ needs.build.outputs.docker_image_tag }}
+          environment: ${{ needs.changelog.outputs.release_created && 'prd' || 'dev' }}
+          github_token: ${{ secrets.GH_TOKEN_PUSH }}

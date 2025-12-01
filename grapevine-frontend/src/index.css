@@ -1,0 +1,589 @@
+@import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+@theme {
+  /* ===== Button Color System ===== */
+  /* Primary (Purple) */
+  --color-win95-btn-primary: var(--btn-primary);
+  --color-win95-btn-primary-light: var(--btn-primary-light);
+  --color-win95-btn-primary-dark: var(--btn-primary-dark);
+
+  /* Secondary (Gray) */
+  --color-win95-btn-secondary: var(--btn-secondary);
+  --color-win95-btn-secondary-light: var(--btn-secondary-light);
+  --color-win95-btn-secondary-dark: var(--btn-secondary-dark);
+
+  /* Success (Green) */
+  --color-win95-btn-success: var(--btn-success);
+  --color-win95-btn-success-light: var(--btn-success-light);
+  --color-win95-btn-success-dark: var(--btn-success-dark);
+
+  /* Warning (Yellow) */
+  --color-win95-btn-warning: var(--btn-warning);
+  --color-win95-btn-warning-light: var(--btn-warning-light);
+  --color-win95-btn-warning-dark: var(--btn-warning-dark);
+
+  /* Danger (Red) */
+  --color-win95-btn-danger: var(--btn-danger);
+  --color-win95-btn-danger-light: var(--btn-danger-light);
+  --color-win95-btn-danger-dark: var(--btn-danger-dark);
+
+  /* ===== Paper/Surface Colors ===== */
+  --color-win95-paper: var(--paper);
+  --color-win95-paper-dark: var(--paper-dark);
+
+  /* ===== Border Colors for Beveled Effects ===== */
+  --color-win95-border-light: var(--border-light);
+  --color-win95-border-dark: var(--border-dark);
+
+  /* ===== State Colors ===== */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+  /* ===== Win95 Theme Colors ===== */
+  --color-win-gray: #c0c0c0;
+  --color-win-gray-light: #dfdfdf;
+  --color-win-gray-dark: #808080;
+  --color-win-blue: #000080;
+  --color-win-blue-light: #1084d0;
+  --color-grapevine-purple: #6b21a8;
+  --color-grapevine-green: #16a34a;
+  --color-grapevine-yellow: #eab308;
+  --color-grapevine-red: #dc2626;
+}
+
+:root,
+[data-theme="neobrutalism"] {
+  /* ===== Core Brand Colors (Neobrutalism) ===== */
+  --main: #000000;
+  --bg: #ffffff;
+  --bw: #ffffff;
+  --text: #000000;
+  --border: #000000;
+
+  /* ===== Paper/Surface Colors ===== */
+  --paper: #ffffff;
+  --paper-dark: #f0f0f0;
+
+  /* ===== Border Colors ===== */
+  --border-light: #000000;
+  --border-dark: #000000;
+
+  /* ===== Button Color System ===== */
+  /* Primary */
+  --btn-primary: #ffffff;
+  --btn-primary-light: #ffffff;
+  --btn-primary-dark: #000000;
+
+  /* Secondary */
+  --btn-secondary: #ffffff;
+  --btn-secondary-light: #ffffff;
+  --btn-secondary-dark: #000000;
+
+  /* Success */
+  --btn-success: #ffffff;
+  --btn-success-light: #ffffff;
+  --btn-success-dark: #000000;
+
+  /* Warning */
+  --btn-warning: #ffffff;
+  --btn-warning-light: #ffffff;
+  --btn-warning-dark: #000000;
+
+  /* Danger */
+  --btn-danger: #ffffff;
+  --btn-danger-light: #ffffff;
+  --btn-danger-dark: #000000;
+
+  /* ===== State Colors ===== */
+  --success: #00ff00;
+  --warning: #ffff00;
+  --error: #ff0000;
+  --info: #0000ff;
+
+  /* ===== Typography ===== */
+  --base-font-weight: 700;
+  --heading-font-weight: 900;
+  --font-body: "Arial", "Helvetica", sans-serif;
+  --font-heading: "Arial", "Helvetica", sans-serif;
+
+  /* ===== Structure & Shapes ===== */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-base: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-util: 0px;
+
+  /* ===== Shadows (thicker, more prominent) ===== */
+  --shadow-raised: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-raised-lg: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-inset: inset 3px 3px 0px rgba(0, 0, 0, 1);
+  --shadow-card: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-card-lg: 10px 10px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-modal: 12px 12px 0px 0px rgba(0, 0, 0, 1);
+
+  /* ===== Legacy Variables (for compatibility) ===== */
+  --ring: #000000;
+  --ring-offset: #ffffff;
+  --mtext: #000000;
+  --blank: #000000;
+  --border-radius: 0px;
+  --box-shadow-x: 0px;
+  --box-shadow-y: 0px;
+  --reverse-box-shadow-x: 0px;
+  --reverse-box-shadow-y: 0px;
+  --shadow: 0px 0px 0px 0px transparent;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: var(--base-font-weight);
+}
+
+/* ===== WIN95 THEME UTILITIES ===== */
+.win95-border {
+  box-shadow:
+    inset 1px 1px #dfdfdf,
+    inset 2px 2px #ffffff,
+    inset -1px -1px #808080,
+    inset -2px -2px #000000;
+}
+
+.win95-border-inset {
+  box-shadow:
+    inset 1px 1px #808080,
+    inset 2px 2px #000000,
+    inset -1px -1px #dfdfdf,
+    inset -2px -2px #ffffff;
+}
+
+.win95-button {
+  --win95-btn-bg: var(--btn-secondary);
+  --win95-btn-fg: #111827;
+  --win95-btn-top: var(--btn-secondary-light);
+  --win95-btn-left: var(--btn-secondary-light);
+  --win95-btn-bottom: var(--btn-secondary-dark);
+  --win95-btn-right: var(--btn-secondary-dark);
+  --win95-btn-pad-y: 0.4rem;
+  --win95-btn-pad-x: 1rem;
+  background-color: var(--win95-btn-bg);
+  color: var(--win95-btn-fg);
+  border: 2px solid #000000;
+  border-top-color: var(--win95-btn-top);
+  border-left-color: var(--win95-btn-left);
+  border-bottom-color: var(--win95-btn-bottom);
+  border-right-color: var(--win95-btn-right);
+  padding: var(--win95-btn-pad-y) var(--win95-btn-pad-x);
+  font-family: "MS Sans Serif", "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 1.1;
+  min-height: 32px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.win95-button[data-size="sm"] {
+  --win95-btn-pad-y: 0.25rem;
+  --win95-btn-pad-x: 0.75rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.07em;
+}
+
+.win95-button[data-size="lg"] {
+  --win95-btn-pad-y: 0.55rem;
+  --win95-btn-pad-x: 1.35rem;
+  font-size: 0.85rem;
+}
+
+.win95-button[data-variant="primary"] {
+  --win95-btn-bg: var(--btn-primary);
+  --win95-btn-fg: #ffffff;
+  --win95-btn-top: var(--btn-primary-light);
+  --win95-btn-left: var(--btn-primary-light);
+  --win95-btn-bottom: var(--btn-primary-dark);
+  --win95-btn-right: var(--btn-primary-dark);
+}
+
+.win95-button[data-variant="success"] {
+  --win95-btn-bg: var(--btn-success);
+  --win95-btn-fg: #ffffff;
+  --win95-btn-top: var(--btn-success-light);
+  --win95-btn-left: var(--btn-success-light);
+  --win95-btn-bottom: var(--btn-success-dark);
+  --win95-btn-right: var(--btn-success-dark);
+}
+
+.win95-button[data-variant="warning"] {
+  --win95-btn-bg: var(--btn-warning);
+  --win95-btn-fg: #111827;
+  --win95-btn-top: var(--btn-warning-light);
+  --win95-btn-left: var(--btn-warning-light);
+  --win95-btn-bottom: var(--btn-warning-dark);
+  --win95-btn-right: var(--btn-warning-dark);
+}
+
+.win95-button[data-variant="danger"] {
+  --win95-btn-bg: var(--btn-danger);
+  --win95-btn-fg: #ffffff;
+  --win95-btn-top: var(--btn-danger-light);
+  --win95-btn-left: var(--btn-danger-light);
+  --win95-btn-bottom: var(--btn-danger-dark);
+  --win95-btn-right: var(--btn-danger-dark);
+}
+
+.win95-button[data-variant="ghost"],
+.win95-button[data-variant="outline"] {
+  --win95-btn-bg: #ffffff;
+  --win95-btn-fg: var(--text);
+  --win95-btn-top: #ffffff;
+  --win95-btn-left: #ffffff;
+  --win95-btn-bottom: var(--border-dark);
+  --win95-btn-right: var(--border-dark);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Hover and active effects only on desktop (lg and up) */
+@media (min-width: 1024px) {
+  .win95-button:not(:disabled):hover {
+    filter: brightness(1.05);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .win95-button:active:not(:disabled) {
+    box-shadow:
+      inset 1px 1px rgba(0, 0, 0, 0.6),
+      inset 2px 2px rgba(0, 0, 0, 0.35),
+      inset -1px -1px rgba(255, 255, 255, 0.8),
+      inset -2px -2px rgba(255, 255, 255, 0.6);
+    transform: translate(1px, 1px);
+    border-top-color: var(--win95-btn-bottom);
+    border-left-color: var(--win95-btn-right);
+    border-bottom-color: var(--win95-btn-top);
+    border-right-color: var(--win95-btn-left);
+  }
+}
+
+.win95-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 640px) {
+  .win95-button {
+    --win95-btn-pad-y: 0.28rem;
+    --win95-btn-pad-x: 0.65rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    min-height: 28px;
+  }
+
+  .win95-button[data-size="lg"] {
+    --win95-btn-pad-y: 0.35rem;
+    --win95-btn-pad-x: 0.85rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* ===== NEOBRUTALISM THEME UTILITIES ===== */
+.neobrutalism-button {
+  --neobrutalism-btn-bg: #ffffff;
+  --neobrutalism-btn-fg: #000000;
+  --neobrutalism-btn-border: #000000;
+  --neobrutalism-btn-pad-y: 0.4rem;
+  --neobrutalism-btn-pad-x: 1rem;
+  background-color: var(--neobrutalism-btn-bg);
+  color: var(--neobrutalism-btn-fg);
+  border: 2px solid var(--neobrutalism-btn-border);
+  border-right: 4px solid var(--neobrutalism-btn-border);
+  border-bottom: 4px solid var(--neobrutalism-btn-border);
+  padding: var(--neobrutalism-btn-pad-y) var(--neobrutalism-btn-pad-x);
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-size: 0.875rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 1.2;
+  min-height: 32px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.neobrutalism-button[data-size="sm"] {
+  --neobrutalism-btn-pad-y: 0.25rem;
+  --neobrutalism-btn-pad-x: 0.75rem;
+  font-size: 0.75rem;
+  border-right-width: 3px;
+  border-bottom-width: 3px;
+}
+
+.neobrutalism-button[data-size="lg"] {
+  --neobrutalism-btn-pad-y: 0.55rem;
+  --neobrutalism-btn-pad-x: 1.35rem;
+  font-size: 1rem;
+  border-right-width: 5px;
+  border-bottom-width: 5px;
+}
+
+.neobrutalism-button[data-variant="primary"] {
+  --neobrutalism-btn-bg: #000000;
+  --neobrutalism-btn-fg: #ffffff;
+  --neobrutalism-btn-border: #000000;
+}
+
+.neobrutalism-button[data-variant="success"] {
+  --neobrutalism-btn-bg: #00ff00;
+  --neobrutalism-btn-fg: #000000;
+  --neobrutalism-btn-border: #000000;
+}
+
+.neobrutalism-button[data-variant="warning"] {
+  --neobrutalism-btn-bg: #ffff00;
+  --neobrutalism-btn-fg: #000000;
+  --neobrutalism-btn-border: #000000;
+}
+
+.neobrutalism-button[data-variant="danger"] {
+  --neobrutalism-btn-bg: #ff6b35;
+  --neobrutalism-btn-fg: #ffffff;
+  --neobrutalism-btn-border: #000000;
+}
+
+.neobrutalism-button[data-variant="ghost"],
+.neobrutalism-button[data-variant="outline"] {
+  --neobrutalism-btn-bg: transparent;
+  --neobrutalism-btn-fg: #000000;
+  --neobrutalism-btn-border: #000000;
+  border: 2px solid var(--neobrutalism-btn-border);
+  border-right: 4px solid var(--neobrutalism-btn-border);
+  border-bottom: 4px solid var(--neobrutalism-btn-border);
+}
+
+/* Hover and active effects only on desktop (lg and up) */
+@media (min-width: 1024px) {
+  .neobrutalism-button:not(:disabled):not([data-no-hover]):hover {
+    transform: translate(-2px, -2px);
+    border-right-width: 6px;
+    border-bottom-width: 6px;
+  }
+
+  .neobrutalism-button:active:not(:disabled):not([data-no-hover]) {
+    transform: translate(2px, 2px);
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+  }
+}
+
+.neobrutalism-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .neobrutalism-button {
+    --neobrutalism-btn-pad-y: 0.28rem;
+    --neobrutalism-btn-pad-x: 0.65rem;
+    font-size: 0.75rem;
+    min-height: 28px;
+  }
+
+  .neobrutalism-button[data-size="lg"] {
+    --neobrutalism-btn-pad-y: 0.35rem;
+    --neobrutalism-btn-pad-x: 0.85rem;
+    font-size: 0.875rem;
+  }
+}
+
+.win95-window {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset 1px 1px #dfdfdf,
+    inset 2px 2px #ffffff,
+    inset -1px -1px #808080,
+    inset -2px -2px #000000;
+  padding: 2px;
+}
+
+.win95-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  color: white;
+  padding: 2px 4px;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}
+
+/* Flat, soft surfaces */
+.border-4 {
+  border-width: 2px;
+  border-radius: var(--radius-util);
+}
+
+.border-2 {
+  border-width: 1px;
+  border-radius: var(--radius-util);
+}
+
+[class*="shadow-["] {
+  box-shadow: inherit;
+}
+
+button,
+a {
+  border-radius: var(--radius-util);
+}
+
+/* White text on purple backgrounds */
+.bg-\[var\(--main\)\],
+[style*="background-color: var(--main)"],
+[class*="bg-main"] {
+  color: #FFFFFF !important;
+}
+
+/* Page titles - black with no underline */
+.page-title {
+  color: #171420;
+  text-decoration: none;
+}
+
+/* Toast animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Buzz animation for revenue changes */
+@keyframes buzz {
+  0% {
+    transform: scale(1) rotate(0deg);
+    color: inherit;
+  }
+  10% {
+    transform: scale(1.3) rotate(-3deg);
+    color: #FFE635;
+  }
+  20% {
+    transform: scale(1.25) rotate(3deg);
+    color: #00CC92;
+  }
+  30% {
+    transform: scale(1.3) rotate(-3deg);
+    color: #FFE635;
+  }
+  40% {
+    transform: scale(1.25) rotate(3deg);
+    color: #00CC92;
+  }
+  50% {
+    transform: scale(1.3) rotate(-2deg);
+    color: #FFE635;
+  }
+  60% {
+    transform: scale(1.25) rotate(2deg);
+    color: #00CC92;
+  }
+  70% {
+    transform: scale(1.2) rotate(-1deg);
+    color: #FFE635;
+  }
+  80% {
+    transform: scale(1.15) rotate(1deg);
+    color: #00CC92;
+  }
+  90% {
+    transform: scale(1.1) rotate(-0.5deg);
+    color: inherit;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    color: inherit;
+  }
+}
+
+.animate-buzz {
+  animation: buzz 1s ease-in-out;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Privy modal z-index override - ensure it's above hamburger menu */
+#privy-dialog-container,
+#headlessui-portal-root,
+[data-reach-dialog-overlay],
+[role="dialog"] {
+  z-index: 9999 !important;
+}
+
+/* Mobile typography - minimum 16px to prevent iOS zoom on inputs */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px;
+  }
+
+  /* Ensure all form elements are at least 16px */
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px;
+  }
+
+  /* Override Tailwind small text classes to minimum 16px on mobile */
+  .text-sm {
+    font-size: 16px !important;
+  }
+
+  .text-xs {
+    font-size: 14px !important;
+  }
+}

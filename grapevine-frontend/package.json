@@ -1,0 +1,77 @@
+{
+  "name": "grapevine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": "22.21.1",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:vercel": "vercel dev --yes",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "ladle": "ladle serve"
+  },
+  "dependencies": {
+    "@farcaster/miniapp-sdk": "^0.2.1",
+    "@farcaster/miniapp-wagmi-connector": "^1.1.0",
+    "@fontsource/inter": "^5.2.8",
+    "@ladle/react": "^5.1.1",
+    "@pinata/grapevine-sdk": "^0.2.5",
+    "@privy-io/react-auth": "^3.4.1",
+    "@privy-io/wagmi": "^2.0.2",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@solana/sysvars": "^5.0.0",
+    "@solana/wallet-adapter-react": "^0.15.39",
+    "@solana/wallet-adapter-react-ui": "^0.9.39",
+    "@solana/wallet-adapter-wallets": "^0.19.37",
+    "@solana/web3.js": "^1.98.4",
+    "@tanstack/react-query": "^5.90.5",
+    "autoprefixer": "^10.4.21",
+    "bs58": "^6.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "fastestsmallesttextencoderdecoder": "^1.0.22",
+    "hono": "^4.10.3",
+    "lucide-react": "^0.554.0",
+    "openapi-fetch": "^0.15.0",
+    "pinata": "^2.5.1",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.4",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.16",
+    "viem": "^2.38.5",
+    "wagmi": "^2.19.1",
+    "webamp": "^2.2.0",
+    "ws": "^8.18.3",
+    "x402-fetch": "^0.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@tailwindcss/postcss": "^4.1.16",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    "globals": "^16.4.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.45.0",
+    "vercel": "^48.6.7",
+    "vite": "^7.1.7"
+  },
+  "pnpm": {
+    "overrides": {
+      "@solana/kit": "canary"
+    }
+  }
+}

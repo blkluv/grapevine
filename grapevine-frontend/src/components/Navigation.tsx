@@ -19,7 +19,7 @@ export function Navigation() {
     { path: '/', label: 'Home' },
     { path: '/feeds', label: 'Feeds' },
     { path: '/top-sellers', label: 'Top Sellers' },
-    { path: '/about', label: 'Wtf is this?' },
+    { path: '/about', label: 'About' },
   ]
 
   // Check if current path is feeds or a feed entry page

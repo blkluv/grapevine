@@ -11,7 +11,7 @@ const styles = {
   visualizerBar: 'w-full bg-black border-2 border-black transition-all duration-75',
   controlButton: 'w-8 h-8 bg-[#ff6b35] border-4 border-black flex items-center justify-center hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
   volumeBar: 'w-20 h-3 bg-white border-3 border-black overflow-hidden shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.3)]',
-  volumeFill: 'w-2/3 h-full bg-black',
+  volumeFill: 'h-full bg-black',
   iconColor: 'text-black',
   volumeIconColor: 'text-black',
 }
@@ -30,6 +30,8 @@ export function MusicPlayer({ className }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [time, setTime] = useState(0)
   const [frequencyData, setFrequencyData] = useState<number[]>(Array(40).fill(0))
+  const [volume, setVolume] = useState(0.67)
+  const volumeBarRef = useRef<HTMLDivElement>(null)
 
   // Timer effect
   useEffect(() => {
@@ -71,7 +73,7 @@ export function MusicPlayer({ className }: MusicPlayerProps) {
   // Initialize audio element and cleanup on unmount
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 1.0
+      audioRef.current.volume = volume
       audioRef.current.muted = false
     }
 
@@ -82,6 +84,13 @@ export function MusicPlayer({ className }: MusicPlayerProps) {
       audioContextRef.current?.close()
     }
   }, [])
+
+  // Sync volume to audio element
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume
+    }
+  }, [volume])
 
   // Animate frequency bars
   useEffect(() => {
@@ -156,6 +165,19 @@ export function MusicPlayer({ className }: MusicPlayerProps) {
     }
   }
 
+  const handleVolumeChange = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!volumeBarRef.current) return
+    const rect = volumeBarRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const newVolume = Math.max(0, Math.min(1, x / rect.width))
+    setVolume(newVolume)
+  }
+
+  const handleVolumeDrag = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.buttons !== 1) return // Only handle left mouse button
+    handleVolumeChange(e)
+  }
+
   return (
     <div className={cn(styles.container, className)}>
       {/* Display */}
@@ -204,8 +226,16 @@ export function MusicPlayer({ className }: MusicPlayerProps) {
         </div>
         <div className="flex items-center gap-1">
           <Volume2 className={cn('w-4 h-4', styles.volumeIconColor)} />
-          <div className={styles.volumeBar}>
-            <div className={styles.volumeFill} />
+          <div
+            ref={volumeBarRef}
+            className={cn(styles.volumeBar, 'cursor-pointer')}
+            onClick={handleVolumeChange}
+            onMouseMove={handleVolumeDrag}
+          >
+            <div
+              className={styles.volumeFill}
+              style={{ width: `${volume * 100}%` }}
+            />
           </div>
         </div>
       </div>

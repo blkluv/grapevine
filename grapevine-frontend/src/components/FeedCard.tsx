@@ -125,11 +125,10 @@ export function FeedCard({
         maxWidth: '500px',
       }}
     >
-      {/* Top section: Image (60% height) */}
+      {/* Top section: Image - smaller on mobile for more content space */}
       <div
-        className="w-full flex items-center justify-center"
+        className="w-full flex items-center justify-center h-[55%] md:h-[72%]"
         style={{
-          height: '72%',
           paddingLeft: '8%',
           paddingRight: '8%',
           paddingTop: '4%',
@@ -147,22 +146,22 @@ export function FeedCard({
         />
       </div>
 
-      {/* Bottom section: Content (40% height) */}
-      <div className="flex-1 flex flex-col justify-center text-center px-3 py-2 bg-white overflow-hidden">
+      {/* Bottom section: Content - more space on mobile */}
+      <div className="flex-1 flex flex-col justify-center text-center px-4 py-3 md:px-3 md:py-2 bg-white overflow-hidden">
         {/* Feed name */}
-        <h2 className="font-mono text-sm lg:text-base font-black uppercase tracking-tight text-black mb-1 w-full overflow-hidden text-ellipsis whitespace-nowrap">
+        <h2 className="font-mono text-sm lg:text-base font-black uppercase tracking-tight text-black mb-1.5 md:mb-1 w-full overflow-hidden text-ellipsis whitespace-nowrap">
           {feedName}
         </h2>
 
         {/* Description */}
         {feed.description && (
-          <p className="font-mono text-sm text-black mb-1 w-full overflow-hidden text-ellipsis whitespace-nowrap">
+          <p className="font-mono text-sm text-black mb-1.5 md:mb-1 w-full overflow-hidden text-ellipsis whitespace-nowrap">
             {feed.description}
           </p>
         )}
 
         {/* Stats row */}
-        <div className="font-mono text-xs text-black uppercase font-bold flex items-center justify-center gap-2 mb-1">
+        <div className="font-mono text-xs text-black uppercase font-bold flex items-center justify-center gap-2 mb-1.5 md:mb-1">
           <span>{feed.total_entries} ENTRIES</span>
           {totalPurchases !== undefined && (
             <span>• {totalPurchases} SOLD</span>

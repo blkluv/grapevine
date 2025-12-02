@@ -158,8 +158,8 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1(@swc/helpers@0.5.17)(@types/node@24.10.1)(@types/react@19.2.4)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(terser@5.44.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       '@pinata/grapevine-sdk':
-        specifier: ^0.2.5
-        version: 0.2.5(21c8bea6e33ae0c16bc238f35869de70)
+        specifier: ^0.2.6
+        version: 0.2.6(21c8bea6e33ae0c16bc238f35869de70)
       '@privy-io/react-auth':
         specifier: ^3.4.1
         version: 3.6.1(@react-native-async-storage/async-storage@1.24.0(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.4)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10)))(@solana-program/system@0.8.1(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))))(@solana-program/token@0.6.0(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))))(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@types/react@19.2.4)(@vercel/blob@1.0.2)(bufferutil@4.0.9)(ioredis@5.8.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.0))(utf-8-validate@5.0.10)(zod@4.1.12)
@@ -1470,8 +1470,8 @@ packages:
   '@phosphor-icons/webcomponents@2.1.5':
     resolution: {integrity: sha512-JcvQkZxvcX2jK+QCclm8+e8HXqtdFW9xV4/kk2aL9Y3dJA2oQVt+pzbv1orkumz3rfx4K9mn9fDoMr1He1yr7Q==}
 
-  '@pinata/grapevine-sdk@0.2.5':
-    resolution: {integrity: sha512-4pw6ORaGU2DTZC2I0u1S8cL6U2ptMtPIQmT33mIgBMMgW2bwVacdrRyNubeNHPo4EjdsQcbsZcKLuOb79wgk0Q==}
+  '@pinata/grapevine-sdk@0.2.6':
+    resolution: {integrity: sha512-c1L+gQT1+shpjS9o0fVUmipcIrZPJIEw3MkKXPykRl0vjqau+lgSmOQBF4raA6TBceJ7tFhZNxXwbPsDevwm7w==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
@@ -11209,7 +11209,7 @@ snapshots:
     dependencies:
       lit: 3.3.0
 
-  '@pinata/grapevine-sdk@0.2.5(21c8bea6e33ae0c16bc238f35869de70)':
+  '@pinata/grapevine-sdk@0.2.6(21c8bea6e33ae0c16bc238f35869de70)':
     dependencies:
       '@coinbase/x402': 0.7.1(@react-native-async-storage/async-storage@1.24.0(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.4)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10)))(@solana/sysvars@5.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3))(@tanstack/query-core@5.90.8)(@tanstack/react-query@5.90.8(react@19.2.0))(@types/react@19.2.4)(@vercel/blob@1.0.2)(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(ioredis@5.8.2)(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.4)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10))(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       mime-types: 2.1.35

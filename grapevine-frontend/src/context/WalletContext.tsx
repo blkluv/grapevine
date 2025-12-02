@@ -1,9 +1,11 @@
-import { createContext, useContext, type ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { useSignMessage, useAccount, useConnectors } from 'wagmi';
-import sdk from '@farcaster/miniapp-sdk';
+import { useSetActiveWallet } from '@privy-io/wagmi';
+import { useSignMessage, useAccount, useConnect, useDisconnect } from 'wagmi';
+import { farcasterMiniApp as miniAppConnector } from '@farcaster/miniapp-wagmi-connector';
 import type { SignaturePayload } from '@/services/auth';
 import { grapevineApiClient } from '@/services/grapevineApi';
+import { useFarcaster } from './FarcasterContext';
 
 export interface WalletContextType {
   // Connection state
@@ -26,136 +28,121 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
-  const { ready, authenticated, login, logout, user } = usePrivy();
-  const { wallets } = useWallets();
-  const { signMessageAsync } = useSignMessage();
+  const { isInMiniApp, isSDKReady } = useFarcaster();
+
+  // Privy hooks (only used when NOT in mini app)
+  const { ready: privyReady, authenticated: privyAuthenticated, login: privyLogin, logout: privyLogout } = usePrivy();
+  const { wallets: privyWallets } = useWallets();
+  const { setActiveWallet } = useSetActiveWallet();
+
+  // Wagmi hooks (used in both modes)
   const wagmiAccount = useAccount();
-  const wagmiConnectors = useConnectors();
+  const { connect: wagmiConnect } = useConnect();
+  const { disconnect: wagmiDisconnect } = useDisconnect();
+  const { signMessageAsync } = useSignMessage();
 
-  // Determine address with priority:
-  // 1. If wagmi is connected → Use wagmi's address (latest connected wallet)
-  // 2. Otherwise → Use Privy's active wallet (wallets[0])
-  // 3. Fallback → linkedAccounts if wallets is empty (Farcaster mini app)
-  let address: string | null = null;
-  let addressSource: string = 'none';
+  // Farcaster connector ref (stable instance)
+  const farcasterConnectorRef = useRef(miniAppConnector());
 
-  if (wagmiAccount.isConnected && wagmiAccount.address) {
-    // Priority 1: Use wagmi's connected wallet
-    address = wagmiAccount.address;
-    addressSource = 'wagmi';
-  } else if (wallets.length > 0) {
-    // Priority 2: Use Privy's active wallet (wallets[0])
-    address = wallets[0].address;
-    addressSource = 'privy-active-wallet';
-  } else if (authenticated && user?.linkedAccounts) {
-    // Priority 3: Fallback to linkedAccounts (Farcaster mini app)
-    const walletAccount = user.linkedAccounts.find(
-      (account) => account.type === 'wallet' && 'address' in account
-    );
-    if (walletAccount && 'address' in walletAccount) {
-      address = walletAccount.address as string;
-      addressSource = 'privy-linked-accounts';
+  // Track if we've attempted auto-connect in Farcaster mode
+  const [farcasterConnectAttempted, setFarcasterConnectAttempted] = useState(false);
+
+  // Determine the mode we're operating in
+  const isFarcasterMode = isSDKReady && isInMiniApp;
+  const isPrivyMode = !isFarcasterMode;
+
+  console.log('[WalletContext] Mode:', isFarcasterMode ? 'FARCASTER' : 'PRIVY');
+
+  // ============================================
+  // FARCASTER MODE: Auto-connect wagmi on load
+  // ============================================
+  useEffect(() => {
+    if (!isFarcasterMode || farcasterConnectAttempted || wagmiAccount.isConnected) {
+      return;
     }
+
+    const autoConnect = async () => {
+      try {
+        console.log('[WalletContext] 🔄 Farcaster mode: Auto-connecting wagmi...');
+        await wagmiConnect({ connector: farcasterConnectorRef.current });
+        console.log('[WalletContext] ✅ Farcaster wagmi connected!');
+      } catch (error) {
+        console.error('[WalletContext] ❌ Farcaster auto-connect failed:', error);
+      } finally {
+        setFarcasterConnectAttempted(true);
+      }
+    };
+
+    autoConnect();
+  }, [isFarcasterMode, farcasterConnectAttempted, wagmiAccount.isConnected, wagmiConnect]);
+
+  // ============================================
+  // PRIVY MODE: Sync Privy wallet to Wagmi
+  // ============================================
+  useEffect(() => {
+    if (!isPrivyMode || privyWallets.length === 0) return;
+    setActiveWallet(privyWallets[0]);
+  }, [isPrivyMode, privyWallets, setActiveWallet]);
+
+  // ============================================
+  // DETERMINE CONNECTION STATE
+  // ============================================
+  let isConnected = false;
+  let isConnecting = false;
+  let address: string | null = null;
+
+  if (isFarcasterMode) {
+    // Farcaster mode: connection state from wagmi
+    isConnected = wagmiAccount.isConnected;
+    isConnecting = !isSDKReady || (wagmiAccount.status === 'connecting');
+    address = wagmiAccount.address ?? null;
+  } else {
+    // Privy mode: connection state from Privy + wagmi
+    isConnecting = !privyReady;
+    isConnected = privyReady && privyAuthenticated && wagmiAccount.isConnected;
+    address = wagmiAccount.address ?? null;
   }
 
-  // Get active wallet for signing (may be different from address if wagmi is connected)
-  const activeWallet = wallets[0];
-
-  // Determine if connected
-  // In mini app: authenticated + has address from linkedAccounts
-  // On desktop: authenticated + has address + wagmi connected
-  const isConnected = ready && authenticated && !!address;
-
-  // Log wallet state for debugging
-  useEffect(() => {
-    console.log('[WalletContext] 🔍 ===== WALLET STATE UPDATE =====');
-    console.log('[WalletContext] - ready:', ready);
-    console.log('[WalletContext] - authenticated:', authenticated);
-    console.log('[WalletContext] - user:', user);
-
-    console.log('[WalletContext] 📋 PRIVY WALLETS (useWallets):');
-    console.log('[WalletContext] - Total Privy wallets:', wallets.length);
-    wallets.forEach((wallet, index) => {
-      console.log(`[WalletContext] - Privy wallet ${index}:`, {
-        address: wallet.address,
-        walletClientType: wallet.walletClientType,
-        connectorType: wallet.connectorType,
-        imported: wallet.imported,
-        isActive: index === 0,
-      });
-    });
-    console.log('[WalletContext] - activeWallet (wallets[0]):', activeWallet);
-
-    console.log('[WalletContext] 🔌 WAGMI STATE (useAccount):');
-    console.log('[WalletContext] - wagmiAccount.isConnected:', wagmiAccount.isConnected);
-    console.log('[WalletContext] - wagmiAccount.address:', wagmiAccount.address);
-    console.log('[WalletContext] - wagmiAccount.connector:', wagmiAccount.connector);
-    console.log('[WalletContext] - wagmiAccount.status:', wagmiAccount.status);
-    console.log('[WalletContext] - wagmiAccount.chain:', wagmiAccount.chain);
-    if (wagmiAccount.connector) {
-      console.log('[WalletContext] - wagmiAccount.connector details:', {
-        id: wagmiAccount.connector.id,
-        name: wagmiAccount.connector.name,
-        type: wagmiAccount.connector.type,
-      });
+  // ============================================
+  // ACTIONS
+  // ============================================
+  const connect = () => {
+    if (isFarcasterMode) {
+      // In Farcaster mode, try to connect wagmi with Farcaster connector
+      console.log('[WalletContext] Farcaster connect requested');
+      wagmiConnect({ connector: farcasterConnectorRef.current });
+    } else {
+      // In Privy mode, open Privy login modal
+      console.log('[WalletContext] Privy connect requested');
+      if (privyReady) {
+        privyLogin();
+      }
     }
+  };
 
-    console.log('[WalletContext] 🔌 WAGMI CONNECTORS (useConnectors):');
-    console.log('[WalletContext] - Total connectors:', wagmiConnectors.length);
-    wagmiConnectors.forEach((connector, index) => {
-      console.log(`[WalletContext] - Connector ${index}:`, {
-        id: connector.id,
-        name: connector.name,
-        type: connector.type,
-        uid: connector.uid,
-      });
-    });
-
-    console.log('[WalletContext] 🎯 FINAL SELECTION:');
-    console.log('[WalletContext] - SELECTED ADDRESS:', address);
-    console.log('[WalletContext] - ADDRESS SOURCE:', addressSource);
-    console.log('[WalletContext] - isConnected:', isConnected);
-
-    // Log linked accounts from Privy user
-    if (user?.linkedAccounts) {
-      console.log('[WalletContext] 📎 PRIVY LINKED ACCOUNTS:');
-      user.linkedAccounts.forEach((account, index) => {
-        console.log(`[WalletContext] - Linked account ${index}:`, {
-          type: account.type,
-          address: 'address' in account ? account.address : 'N/A',
-        });
-      });
+  const disconnect = async () => {
+    if (isFarcasterMode) {
+      // In Farcaster mode, disconnect wagmi
+      console.log('[WalletContext] Farcaster disconnect requested');
+      wagmiDisconnect();
+    } else {
+      // In Privy mode, logout from Privy (which handles wagmi disconnect)
+      console.log('[WalletContext] Privy disconnect requested');
+      await privyLogout();
     }
+  };
 
-    // Show comparison if wagmi and privy have different addresses
-    if (wagmiAccount.address && wallets.length > 0 && wagmiAccount.address.toLowerCase() !== wallets[0].address.toLowerCase()) {
-      console.log('[WalletContext] ⚠️ ADDRESS MISMATCH DETECTED:');
-      console.log('[WalletContext] - Wagmi address:', wagmiAccount.address);
-      console.log('[WalletContext] - Privy wallets[0] address:', wallets[0].address);
-      console.log('[WalletContext] - Using wagmi address as priority');
-    } else if (wagmiAccount.address && wallets.length > 0) {
-      console.log('[WalletContext] ✅ Wagmi and Privy addresses match');
-    }
-
-    console.log('[WalletContext] ===== END WALLET STATE =====');
-  }, [ready, authenticated, user, wallets, activeWallet, address, addressSource, wagmiAccount, wagmiConnectors, isConnected]);
-
-  // Detect when wallet gets disconnected externally
-  useEffect(() => {
-    if (authenticated && address && !wagmiAccount.isConnected) {
-      console.warn('Wallet provider disconnected externally. User may need to reconnect.');
-    }
-  }, [authenticated, address, wagmiAccount.isConnected]);
-
-  // Sign a request for authentication using Grapevine API's nonce-based flow
+  // ============================================
+  // SIGN REQUEST (works the same in both modes via wagmi)
+  // ============================================
   const signRequest = async (
     _method: string,
     _endpoint: string
   ): Promise<SignaturePayload> => {
     console.log('[WalletContext] 📝 signRequest called');
+    console.log('[WalletContext] - Mode:', isFarcasterMode ? 'FARCASTER' : 'PRIVY');
     console.log('[WalletContext] - isConnected:', isConnected);
     console.log('[WalletContext] - address:', address);
-    console.log('[WalletContext] - activeWallet:', activeWallet);
 
     if (!isConnected || !address) {
       console.error('[WalletContext] ❌ Wallet not connected');
@@ -167,58 +154,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
     const nonceResponse = await grapevineApiClient.getNonce(address);
     console.log('[WalletContext] ✅ Got nonce response:', nonceResponse);
 
-    // Branch: Use Farcaster SDK if no activeWallet (mini app context)
-    if (!activeWallet) {
-      console.log('[WalletContext] 🚀 Using Farcaster SDK for signing (mini app mode)');
-      try {
-        // Get Ethereum provider from Farcaster SDK
-        const provider = await sdk.wallet.getEthereumProvider();
-        if (!provider) {
-          throw new Error('Farcaster wallet provider not available');
-        }
-        console.log('[WalletContext] ✅ Got Farcaster provider:', provider);
-
-        // Request personal_sign from Farcaster wallet
-        const signature = await provider.request({
-          method: 'personal_sign',
-          params: [nonceResponse.message as `0x${string}`, address as `0x${string}`],
-        });
-
-        console.log('[WalletContext] ✅ Got signature from Farcaster:', signature);
-
-        const payload = {
-          address,
-          message: nonceResponse.message,
-          signature: signature as string,
-        };
-        console.log('[WalletContext] ✅ Signature payload ready:', payload);
-        return payload;
-      } catch (error) {
-        console.error('[WalletContext] ❌ Farcaster signing failed:', error);
-        throw new Error('Failed to sign with Farcaster wallet');
-      }
-    }
-
-    // Branch: Use Wagmi for desktop wallets
-    console.log('[WalletContext] 🖥️ Using Wagmi for signing (desktop mode)');
-
-    // Check if wallet provider is actually connected
-    console.log('[WalletContext] Step 2: Checking wallet provider accessibility...');
-    try {
-      const walletClient = await activeWallet.getEthereumProvider();
-      if (!walletClient) {
-        console.error('[WalletContext] ❌ Wallet provider not accessible');
-        throw new Error('Wallet provider not accessible. Please reconnect your wallet.');
-      }
-      console.log('[WalletContext] ✅ Wallet provider accessible:', walletClient);
-    } catch (error) {
-      console.error('[WalletContext] ❌ Wallet provider check failed:', error);
-      throw new Error('Wallet provider disconnected. Please reconnect your wallet and try again.');
-    }
-
-    // Sign the message using Wagmi's signMessage
-    console.log('[WalletContext] Step 3: Requesting signature from wallet...');
-    console.log('[WalletContext] - Message to sign:', nonceResponse.message);
+    // Sign using wagmi (works in both modes - wagmi uses the appropriate connector)
+    console.log('[WalletContext] Step 2: Requesting signature via wagmi...');
     try {
       const signaturePromise = signMessageAsync({
         message: nonceResponse.message,
@@ -245,36 +182,42 @@ export function WalletProvider({ children }: WalletProviderProps) {
     } catch (error) {
       console.error('[WalletContext] ❌ Signature request failed:', error);
 
-      // Check if it's a user rejection
       if (error instanceof Error) {
         if (error.message.includes('User rejected') || error.message.includes('denied')) {
-          console.error('[WalletContext] ❌ User rejected signature request');
           throw new Error('Signature request was rejected');
         }
         if (error.message.includes('timeout')) {
-          console.error('[WalletContext] ❌ Signature request timed out');
-          throw error; // Re-throw timeout error as-is
+          throw error;
         }
       }
 
-      // Generic error - likely wallet disconnected
-      console.error('[WalletContext] ❌ Generic signature error - wallet may be disconnected');
-      throw new Error('Failed to sign message. Please reconnect your wallet and try again.');
+      throw new Error('Failed to sign message. Please try again.');
     }
   };
 
-  const connect = () => {
-    if (!ready) return;
-    login();
-  };
-
-  const disconnect = async () => {
-    await logout();
-  };
+  // ============================================
+  // DEBUG LOGGING
+  // ============================================
+  useEffect(() => {
+    console.log('[WalletContext] 🔍 ===== STATE UPDATE =====');
+    console.log('[WalletContext] - Mode:', isFarcasterMode ? 'FARCASTER' : 'PRIVY');
+    console.log('[WalletContext] - isSDKReady:', isSDKReady);
+    console.log('[WalletContext] - isInMiniApp:', isInMiniApp);
+    console.log('[WalletContext] - wagmiAccount.isConnected:', wagmiAccount.isConnected);
+    console.log('[WalletContext] - wagmiAccount.address:', wagmiAccount.address);
+    console.log('[WalletContext] - wagmiAccount.status:', wagmiAccount.status);
+    if (isPrivyMode) {
+      console.log('[WalletContext] - privyReady:', privyReady);
+      console.log('[WalletContext] - privyAuthenticated:', privyAuthenticated);
+      console.log('[WalletContext] - privyWallets:', privyWallets.length);
+    }
+    console.log('[WalletContext] 🎯 FINAL: isConnected:', isConnected, 'address:', address);
+    console.log('[WalletContext] ===== END STATE =====');
+  }, [isFarcasterMode, isSDKReady, isInMiniApp, wagmiAccount, privyReady, privyAuthenticated, privyWallets, isConnected, address, isPrivyMode]);
 
   const value: WalletContextType = {
     isConnected,
-    isConnecting: !ready,
+    isConnecting,
     address,
     connect,
     disconnect,

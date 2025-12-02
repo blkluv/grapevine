@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <FarcasterProvider>
       <PrivyProvider
         appId={import.meta.env.VITE_PRIVY_APP_ID}
         config={{
@@ -36,22 +36,22 @@ createRoot(document.getElementById('root')!).render(
           loginMethods: ['wallet', 'farcaster'],
         }}
       >
-        <WagmiProvider config={wagmiConfig}>
-          <WalletProvider>
-            <GrapevineProvider>
-              <ToastProvider>
-                <ThemeContextProvider>
-                  <FarcasterProvider>
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <WalletProvider>
+              <GrapevineProvider>
+                <ToastProvider>
+                  <ThemeContextProvider>
                     <LayoutProvider>
                       <App />
                     </LayoutProvider>
-                  </FarcasterProvider>
-                </ThemeContextProvider>
-              </ToastProvider>
-            </GrapevineProvider>
-          </WalletProvider>
-        </WagmiProvider>
+                  </ThemeContextProvider>
+                </ToastProvider>
+              </GrapevineProvider>
+            </WalletProvider>
+          </WagmiProvider>
+        </QueryClientProvider>
       </PrivyProvider>
-    </QueryClientProvider>
+    </FarcasterProvider>
   </StrictMode>,
 )

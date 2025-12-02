@@ -10,12 +10,10 @@ import About from './pages/About'
 import OriginalLayout from "@/components/Layouts/OriginalLayout.tsx";
 import ScrollToTop from '@/components/ScrollToTop'
 import { PageTitleProvider } from '@/context/PageTitleContext'
-import { FarcasterAutoLogin } from '@/components/FarcasterAutoLogin'
 
 function App() {
   return (
     <BrowserRouter>
-      <FarcasterAutoLogin />
       <ScrollToTop />
       <PageTitleProvider>
         <OriginalLayout>

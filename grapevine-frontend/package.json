@@ -21,7 +21,7 @@
     "@farcaster/miniapp-wagmi-connector": "^1.1.0",
     "@fontsource/inter": "^5.2.8",
     "@ladle/react": "^5.1.1",
-    "@pinata/grapevine-sdk": "^0.2.5",
+    "@pinata/grapevine-sdk": "^0.2.6",
     "@privy-io/react-auth": "^3.4.1",
     "@privy-io/wagmi": "^2.0.2",
     "@radix-ui/react-dialog": "^1.1.15",

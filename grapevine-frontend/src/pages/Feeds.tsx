@@ -101,22 +101,26 @@ export default function Feeds() {
   const showMyFeeds = filters.view === 'my'
   const currentPageToken = pageTokens[pageTokens.length - 1]
 
-  // For "My Feeds", if wallet hasn't been registered yet, use impossible owner_id to get empty results
-  // This ensures we show empty state instead of all feeds
+  // For "My Feeds", we need a valid wallet ID to query
+  // If wallet isn't registered yet (no walletId), we skip the query and show empty state
   // min_entries: 0 is required to include feeds with zero entries
   const feedQueryParams = {
     page_size: 20,
     ...(currentPageToken && { page_token: currentPageToken }),
-    ...(showMyFeeds && { owner_id: walletId || 'unregistered-wallet', minEntries: 0 }),
+    ...(showMyFeeds && walletId && { owner_id: walletId, minEntries: 0 }),
     ...(filters.category && { category: filters.category }),
   }
 
+  // Skip query if:
+  // - Viewing "My Feeds" and still loading wallet data
+  // - Viewing "My Feeds" and wallet isn't registered (no walletId)
+  const shouldSkipMyFeedsQuery = showMyFeeds && (walletLoading || !walletId)
+
   // Fetch feeds from the real API
-  // Skip query if viewing "My Feeds" and still loading wallet data
   const { data, isLoading: loading, error: queryError } = useGrapevineFeeds({
     ...feedQueryParams,
   }, {
-    enabled: !showMyFeeds || !walletLoading,
+    enabled: !shouldSkipMyFeedsQuery,
   })
 
   console.log("feeds data", data)
@@ -245,8 +249,18 @@ export default function Feeds() {
             </div>
           )}
 
+          {/* Empty state for unregistered wallet viewing "My Feeds" */}
+          {showMyFeeds && !walletLoading && !walletId && (
+            <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
+              <p className="text-xl font-bold uppercase">No Feeds Yet</p>
+              <p className="mt-2 text-lg">
+                You haven't created any feeds yet. Click 'Create Feed' to get started!
+              </p>
+            </div>
+          )}
+
           {/* Error State */}
-          {error && !(showMyFeeds && walletLoading) && (
+          {error && !shouldSkipMyFeedsQuery && (
             <div className="bg-red-100 border-4 border-red-600 p-8 shadow-[8px_8px_0px_0px_#000] mb-6">
               <p className="text-xl font-bold uppercase text-red-800 mb-2">Error</p>
               <p className="text-lg">{error}</p>
@@ -254,7 +268,7 @@ export default function Feeds() {
           )}
 
           {/* Feeds Grid */}
-          {!loading && !walletLoading && !error && (
+          {!loading && !walletLoading && !error && !shouldSkipMyFeedsQuery && (
             <div>
               {feeds.length === 0 ? (
                 <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
@@ -289,7 +303,7 @@ export default function Feeds() {
           )}
 
           {/* Pagination */}
-          {!loading && !walletLoading && !error && feeds.length > 0 && (currentPage > 1 || hasMore) && (
+          {!loading && !walletLoading && !error && !shouldSkipMyFeedsQuery && feeds.length > 0 && (currentPage > 1 || hasMore) && (
             <Pagination
               currentPage={currentPage}
               totalPages={currentPage + (hasMore ? 1 : 0)}

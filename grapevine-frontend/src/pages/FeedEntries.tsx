@@ -237,6 +237,7 @@ export default function FeedEntries() {
             feed={feed}
             disableNavigation={true}
             compact={true}
+            expanded={true}
             showEdit={isOwner}
             showDelete={isOwner}
             onEdit={handleEditClick}

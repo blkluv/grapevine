@@ -3,14 +3,9 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
 import { useWalletByAddress /*, useWalletStats */ } from '@/hooks/useWalletByAddress'
 import { useUserFeeds } from '@/hooks/useUserFeeds'
-import { useDeleteFeed } from '@/hooks/useDeleteFeed'
-import { useWallet } from '@/context/WalletContext'
-import { FeedCard, type AnyFeed } from '@/components/FeedCard'
-import { EditFeedDialog } from '@/components/EditFeedDialog'
-import { DeleteFeedDialog } from '@/components/DeleteFeedDialog'
+import { FeedCard } from '@/components/FeedCard'
 import { Button, Pagination, Loader } from '@/components/ui'
 import { formatWalletAddress } from '@/lib/utils'
-import type { Feed } from '@pinata/grapevine-sdk/dist/types'
 
 const themeStyles = {
   default: {
@@ -52,8 +47,6 @@ export default function UserProfile() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { setTitle } = usePageTitle()
-  const { address } = useWallet()
-  const deleteFeed = useDeleteFeed()
   const [currentTheme, setCurrentTheme] = useState('default')
 
   // Pagination state
@@ -82,24 +75,6 @@ export default function UserProfile() {
   // Fallback to default styles if specific theme styles aren't defined (e.g. win95 uses default for now or add win95 specific)
   // For this specific task, we focus on modern vs default.
   const styles = themeStyles[themeKey === 'modern' ? 'modern' : 'default']
-
-  // Edit and Delete dialog state
-  const [editDialogState, setEditDialogState] = useState<{
-    isOpen: boolean
-    feed: Feed | null
-  }>({
-    isOpen: false,
-    feed: null,
-  })
-  const [deleteDialogState, setDeleteDialogState] = useState<{
-    isOpen: boolean
-    feedId: string | null
-    feedName: string
-  }>({
-    isOpen: false,
-    feedId: null,
-    feedName: '',
-  })
 
   // Read the 'from' query param to get the full path to return to
   const fromEncoded = searchParams.get('from')
@@ -151,41 +126,6 @@ export default function UserProfile() {
       setPageTokens(pageTokens.slice(0, -1))
       setCurrentPage(currentPage - 1)
     }
-  }
-
-  const handleEditClick = (feed: AnyFeed) => {
-    setEditDialogState({
-      isOpen: true,
-      feed: feed as Feed,
-    })
-  }
-
-  const handleEditClose = () => {
-    setEditDialogState({ isOpen: false, feed: null })
-  }
-
-  const handleDeleteClick = (feedId: string, feedName: string) => {
-    setDeleteDialogState({
-      isOpen: true,
-      feedId,
-      feedName,
-    })
-  }
-
-  const handleDeleteConfirm = async () => {
-    if (deleteDialogState.feedId) {
-      try {
-        await deleteFeed.mutateAsync(deleteDialogState.feedId)
-        setDeleteDialogState({ isOpen: false, feedId: null, feedName: '' })
-      } catch (err) {
-        console.error('Failed to delete feed:', err)
-        // Error is handled by the mutation hook
-      }
-    }
-  }
-
-  const handleDeleteCancel = () => {
-    setDeleteDialogState({ isOpen: false, feedId: null, feedName: '' })
   }
 
   // Loading state for wallet
@@ -267,19 +207,13 @@ export default function UserProfile() {
           <>
             {/* Feed Grid */}
             <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 mb-8">
-              {feedsData.feeds.map((feed) => {
-                const isOwner = !!(address && feed.owner_wallet_address?.toLowerCase() === address.toLowerCase())
-                return (
+              {feedsData.feeds.map((feed) => (
                   <FeedCard
                     key={feed.id}
                     feed={feed}
-                    showEdit={isOwner}
-                    showDelete={isOwner}
-                    onEdit={handleEditClick}
-                    onDelete={handleDeleteClick}
                   />
                 )
-              })}
+              )}
             </div>
 
             {/* Pagination */}
@@ -304,21 +238,6 @@ export default function UserProfile() {
         )}
       </div>
 
-      {/* Edit Feed Dialog */}
-      <EditFeedDialog
-        isOpen={editDialogState.isOpen}
-        feed={editDialogState.feed}
-        onClose={handleEditClose}
-      />
-
-      {/* Delete Feed Dialog */}
-      <DeleteFeedDialog
-        isOpen={deleteDialogState.isOpen}
-        feedName={deleteDialogState.feedName}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={deleteFeed.isPending}
-      />
     </div>
   )
 }

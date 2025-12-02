@@ -1,6 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import type { Feed, TrendingFeed, PopularFeed } from '@pinata/grapevine-sdk/dist/types'
 import { cn } from '@/lib/utils'
+import { Pencil, Trash2 } from 'lucide-react'
+import { useWallet } from '@/context/WalletContext'
 import robot1 from '@/assets/img/robots/1.avif'
 import robot2 from '@/assets/img/robots/2.avif'
 import robot3 from '@/assets/img/robots/3.avif'
@@ -44,6 +46,7 @@ interface NeoBrutalistFeedCardProps {
   showEdit?: boolean
   disableNavigation?: boolean
   compact?: boolean
+  expanded?: boolean // When true, removes aspect-square and shows full description
 }
 
 const PINATA_GATEWAY = import.meta.env.VITE_PINATA_GATEWAY
@@ -63,15 +66,18 @@ export function FeedCard({
   showDelete = false,
   showEdit = false,
   disableNavigation = false,
-  compact = false
+  compact = false,
+  expanded = false
 }: NeoBrutalistFeedCardProps) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { address } = useWallet()
 
   // Get derived values from different feed type variants
   const feedName = getFeedName(feed)
   const ownerWallet = getOwnerWallet(feed)
   const totalPurchases = getTotalPurchases(feed)
+  const isOwnedByCurrentUser = !!(address && ownerWallet?.toLowerCase() === address.toLowerCase())
 
   // Construct image URL from image_cid
   const imageUrl = feed.image_cid
@@ -109,11 +115,15 @@ export function FeedCard({
     }
   }
 
+  // Remove aspect-square when expanded or when action buttons are shown
+  const hasActionButtons = showEdit || showDelete
+
   return (
     <div
       onClick={handleCardClick}
       className={cn(
-        'w-full aspect-square bg-white flex flex-col overflow-hidden',
+        'w-full bg-white flex flex-col overflow-hidden',
+        !expanded && !hasActionButtons && 'aspect-square',
         !disableNavigation ? 'cursor-pointer' : '',
         'hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform',
         compact && 'max-w-sm mx-auto'
@@ -125,9 +135,12 @@ export function FeedCard({
         maxWidth: '500px',
       }}
     >
-      {/* Top section: Image - smaller on mobile for more content space */}
+      {/* Top section: Image - use fixed height when expanded/has buttons, percentage otherwise */}
       <div
-        className="w-full flex items-center justify-center h-[55%] md:h-[72%]"
+        className={cn(
+          'w-full flex items-center justify-center',
+          expanded || hasActionButtons ? 'h-48 md:h-64' : 'h-[55%] md:h-[72%]'
+        )}
         style={{
           paddingLeft: '8%',
           paddingRight: '8%',
@@ -147,15 +160,24 @@ export function FeedCard({
       </div>
 
       {/* Bottom section: Content - more space on mobile */}
-      <div className="flex-1 flex flex-col justify-center text-center px-4 py-3 md:px-3 md:py-2 bg-white overflow-hidden">
+      <div className={cn(
+        'flex-1 flex flex-col justify-center text-center px-4 py-3 md:px-3 md:py-2 bg-white',
+        !expanded && 'overflow-hidden'
+      )}>
         {/* Feed name */}
-        <h2 className="font-mono text-sm lg:text-base font-black uppercase tracking-tight text-black mb-1.5 md:mb-1 w-full overflow-hidden text-ellipsis whitespace-nowrap">
+        <h2 className={cn(
+          'font-mono text-sm lg:text-base font-black uppercase tracking-tight text-black mb-1.5 md:mb-1 w-full',
+          !expanded && 'overflow-hidden text-ellipsis whitespace-nowrap'
+        )}>
           {feedName}
         </h2>
 
         {/* Description */}
         {feed.description && (
-          <p className="font-mono text-sm text-black mb-1.5 md:mb-1 w-full overflow-hidden text-ellipsis whitespace-nowrap">
+          <p className={cn(
+            'font-mono text-sm text-black mb-1.5 md:mb-1 w-full',
+            !expanded && 'overflow-hidden text-ellipsis whitespace-nowrap'
+          )}>
             {feed.description}
           </p>
         )}
@@ -178,29 +200,34 @@ export function FeedCard({
         {/* Creator */}
         {ownerWallet && (
           <div
-            onClick={handleAddressClick}
-            className="font-mono text-xs text-black uppercase font-bold hover:bg-black hover:text-white transition-colors px-1 cursor-pointer"
+            onClick={isOwnedByCurrentUser ? undefined : handleAddressClick}
+            className={cn(
+              'font-mono text-xs text-black uppercase font-bold px-1',
+              !isOwnedByCurrentUser && 'hover:bg-black hover:text-white transition-colors cursor-pointer'
+            )}
           >
-            BY {ownerWallet.slice(0, 6)}...{ownerWallet.slice(-4)}
+            BY {isOwnedByCurrentUser ? 'YOU' : `${ownerWallet.slice(0, 6)}...${ownerWallet.slice(-4)}`}
           </div>
         )}
 
         {/* Action buttons (edit/delete) - only show if needed */}
         {(showEdit || showDelete) && (
-          <div className="flex gap-1 mt-1 justify-center">
+          <div className="flex gap-2 mt-2 justify-center">
             {showEdit && onEdit && (
               <button
                 onClick={handleEdit}
-                className="font-mono text-xs font-black uppercase px-2 py-1 bg-white border-2 border-black hover:bg-black hover:text-white transition-colors"
+                className="font-mono text-xs font-black uppercase px-3 py-1.5 bg-white border-2 border-black hover:bg-black hover:text-white transition-colors flex items-center gap-1.5"
               >
+                <Pencil size={14} />
                 EDIT
               </button>
             )}
             {showDelete && onDelete && (
               <button
                 onClick={handleDelete}
-                className="font-mono text-xs font-black uppercase px-2 py-1 bg-white border-2 border-black hover:bg-black hover:text-white transition-colors"
+                className="font-mono text-xs font-black uppercase px-3 py-1.5 bg-white border-2 border-black hover:bg-red-500 hover:border-red-500 hover:text-white transition-colors flex items-center gap-1.5"
               >
+                <Trash2 size={14} />
                 DELETE
               </button>
             )}

@@ -2,15 +2,11 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
 import { CreateFeedDialog } from '@/components/CreateFeedDialog'
-import { EditFeedDialog } from '@/components/EditFeedDialog'
-import { DeleteFeedDialog } from '@/components/DeleteFeedDialog'
-import { FeedCard, type AnyFeed } from '@/components/FeedCard'
+import { FeedCard } from '@/components/FeedCard'
 import { Button, Pagination, Loader } from '@/components/ui'
 import { useWallet } from '@/context/WalletContext'
 import { useGrapevineFeeds } from '@/hooks/useGrapevineFeeds'
-import { useDeleteFeed } from '@/hooks/useDeleteFeed'
 import { useWalletByAddress } from '@/hooks/useWalletByAddress'
-import type { Feed } from '@pinata/grapevine-sdk/dist/types'
 
 // Filter type for URL query params - extensible for future filters
 type FeedFilters = {
@@ -37,24 +33,6 @@ export default function Feeds() {
     setTitle('Feeds')
   }, [setTitle])
 
-  const [editDialogState, setEditDialogState] = useState<{
-    isOpen: boolean
-    feed: Feed | null
-  }>({
-    isOpen: false,
-    feed: null,
-  })
-  const [deleteDialogState, setDeleteDialogState] = useState<{
-    isOpen: boolean
-    feedId: string | null
-    feedName: string
-  }>({
-    isOpen: false,
-    feedId: null,
-    feedName: '',
-  })
-
-  const deleteFeed = useDeleteFeed()
 
   // Fetch wallet info to get wallet_id
   const { data: walletData, isLoading: walletLoading } = useWalletByAddress(address)
@@ -156,41 +134,6 @@ export default function Feeds() {
     }
   }
 
-  const handleEditClick = (feed: AnyFeed) => {
-    setEditDialogState({
-      isOpen: true,
-      feed: feed as Feed,
-    })
-  }
-
-  const handleEditClose = () => {
-    setEditDialogState({ isOpen: false, feed: null })
-  }
-
-  const handleDeleteClick = (feedId: string, feedName: string) => {
-    setDeleteDialogState({
-      isOpen: true,
-      feedId,
-      feedName,
-    })
-  }
-
-  const handleDeleteConfirm = async () => {
-    if (deleteDialogState.feedId) {
-      try {
-        await deleteFeed.mutateAsync(deleteDialogState.feedId)
-        setDeleteDialogState({ isOpen: false, feedId: null, feedName: '' })
-      } catch (err) {
-        console.error('Failed to delete feed:', err)
-        // Error is handled by the mutation hook
-      }
-    }
-  }
-
-  const handleDeleteCancel = () => {
-    setDeleteDialogState({ isOpen: false, feedId: null, feedName: '' })
-  }
-
   return (
     <div>
       {/* Create Button or Connect Wallet */}
@@ -283,20 +226,14 @@ export default function Feeds() {
                 </div>
               ) : (
                 <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
-                  {feeds.map((feed) => {
-                    const isOwner = !!(address && feed.owner_wallet_address?.toLowerCase() === address.toLowerCase())
-                    return (
+                  {feeds.map((feed) => (
                       <FeedCard
                         key={feed.id}
                         feed={feed}
-                        showEdit={isOwner}
-                        showDelete={isOwner}
-                        onEdit={handleEditClick}
-                        onDelete={handleDeleteClick}
                         compact={true}
                       />
                     )
-                  })}
+                  )}
                 </div>
               )}
             </div>
@@ -319,22 +256,6 @@ export default function Feeds() {
       <CreateFeedDialog
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
-      />
-
-      {/* Edit Feed Dialog */}
-      <EditFeedDialog
-        isOpen={editDialogState.isOpen}
-        feed={editDialogState.feed}
-        onClose={handleEditClose}
-      />
-
-      {/* Delete Feed Dialog */}
-      <DeleteFeedDialog
-        isOpen={deleteDialogState.isOpen}
-        feedName={deleteDialogState.feedName}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={deleteFeed.isPending}
       />
     </div>
   )

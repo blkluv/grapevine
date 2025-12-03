@@ -9,7 +9,6 @@ import {
   CursorPaginationQuerySchema,
   CursorPaginatedResponseSchema,
   AuthHeadersSchema,
-  PaymentHeadersSchema,
 } from '../schemas.js';
 import { requireWalletAuth } from '../middleware/walletAuth.js';
 import { createGroup, getPinataV3Config, extractCIDFromURL, isValidCID, isBase64, uploadToPinata, fetchAndUploadImage } from '../services/pinataV3.js';
@@ -28,6 +27,7 @@ type WalletAuthEnv = {
 
 const feeds = new OpenAPIHono<WalletAuthEnv>();
 
+feeds.post('/', requireWalletAuth);
 feeds.patch('/:feed_id', requireWalletAuth);
 feeds.delete('/:feed_id', requireWalletAuth);
 
@@ -268,9 +268,9 @@ const createFeedRoute = createRoute({
   path: '/',
   tags: ['Feeds'],
   summary: 'Create feed',
-  description: 'Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-payment headers.',
+  description: 'Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-auth headers.',
   request: {
-    headers: PaymentHeadersSchema,
+    headers: AuthHeadersSchema,
     body: {
       content: {
         'application/json': {

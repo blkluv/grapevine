@@ -3,9 +3,7 @@ import { cors } from 'hono/cors';
 import { bodyLimit } from 'hono/body-limit';
 import { requestLogger } from '../middleware/requestLogger.js';
 import { rateLimit } from '../middleware/rateLimit.js';
-import { facilitator } from '@coinbase/x402';
 import { config } from '../services/config.js';
-import { paymentMiddlewareWithPayer } from "./x402PaymentWithPayer.js";
 import { logger } from '../services/logger.js';
 
 export function withMiddlewares(app: OpenAPIHono) {
@@ -85,31 +83,31 @@ export function withMiddlewares(app: OpenAPIHono) {
     }
   }));
 
-  // Payment middleware for feed creation
-  app.post('/v1/feeds', paymentMiddlewareWithPayer(
-    config.x402.payToAddress as `0x${string}`,
-    {
-      "/v1/feeds": {
-        price: config.x402.feedCreationPrice,
-        network: config.x402.network as 'base' | 'base-sepolia',
-        config: { description: "Create a new feed on Grapevine" }
-      }
-    },
-    facilitator
-  ));
+  // Payment middleware for feed creation (COMMENTED OUT - using wallet auth instead)
+  // app.post('/v1/feeds', paymentMiddlewareWithPayer(
+  //   config.x402.payToAddress as `0x${string}`,
+  //   {
+  //     "/v1/feeds": {
+  //       price: config.x402.feedCreationPrice,
+  //       network: config.x402.network as 'base' | 'base-sepolia',
+  //       config: { description: "Create a new feed on Grapevine" }
+  //     }
+  //   },
+  //   facilitator
+  // ));
 
-  // Payment middleware for entry creation
-  app.post('/v1/feeds/:feed_id/entries', paymentMiddlewareWithPayer(
-    config.x402.payToAddress as `0x${string}`,
-    {
-      "/v1/feeds/*/entries": {
-        price: config.x402.entryCreationPrice,
-        network: config.x402.network as 'base' | 'base-sepolia',
-        config: { description: "Create a new entry in a feed on Grapevine" }
-      }
-    },
-    facilitator
-  ));
+  // Payment middleware for entry creation (COMMENTED OUT - using wallet auth instead)
+  // app.post('/v1/feeds/:feed_id/entries', paymentMiddlewareWithPayer(
+  //   config.x402.payToAddress as `0x${string}`,
+  //   {
+  //     "/v1/feeds/*/entries": {
+  //       price: config.x402.entryCreationPrice,
+  //       network: config.x402.network as 'base' | 'base-sepolia',
+  //       config: { description: "Create a new entry in a feed on Grapevine" }
+  //     }
+  //   },
+  //   facilitator
+  // ));
 
   return app;
 }

@@ -7,7 +7,6 @@ import {
   CursorPaginationQuerySchema,
   CursorPaginatedResponseSchema,
   AuthHeadersSchema,
-  PaymentHeadersSchema,
   CreateAccessLinkSchema,
   AccessLinkResponseSchema,
 } from '../schemas.js';
@@ -42,6 +41,7 @@ const entries = new OpenAPIHono<WalletAuthEnv>();
 //   }
 // }));
 
+entries.post('/:feed_id/entries', requireWalletAuth);
 entries.delete('/:feed_id/entries/:entry_id', requireWalletAuth);
 
 // Get feed entries (cursor-based pagination)
@@ -160,7 +160,7 @@ const createFeedEntryRoute = createRoute({
   summary: 'Create feed entry',
   description: 'Publish a new entry (message) to a specific feed. Content is provided as base64 and uploaded to IPFS via Pinata. Automatically creates payment instructions (paid or free) and enforces maximum entry limit per feed. Requires wallet authentication and feed ownership verification.',
   request: {
-    headers: PaymentHeadersSchema,
+    headers: AuthHeadersSchema,
     params: z.object({
       feed_id: z.string().uuid(),
     }),

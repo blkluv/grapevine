@@ -5,10 +5,10 @@ import { generateTestContent } from '../helpers/pinata.js';
 
 /**
  * X402 Payment Middleware Tests
- * Tests that the x402 payment middleware is properly applied to protected endpoints
  *
- * NOTE: This test file unmocks the x402-hono middleware that is mocked globally in setup.ts
- * to actually test the payment protection behavior
+ * NOTE: Payment middleware has been disabled in favor of wallet auth.
+ * These tests now verify that wallet auth is required instead of payment.
+ * The routes now return 401 Unauthorized when no auth headers are provided.
  */
 
 describe('X402 Payment Middleware', () => {
@@ -27,19 +27,20 @@ describe('X402 Payment Middleware', () => {
   let testFeed: any;
 
   beforeEach(async () => {
-    
-        
+
+
     testWallet = await createTestWallet(testPool);
     testCategory = await createTestCategory(testPool);
     testFeed = await createTestFeed(testPool, testWallet.id, testCategory.id);
   });
 
   describe('POST /v1/feeds - Feed Creation Payment Protection', () => {
-    it('should return 402 Payment Required when creating feed without payment', async () => {
+    // Payment middleware disabled - now uses wallet auth which returns 401
+    it('should return 401 Unauthorized when creating feed without auth', async () => {
       const newFeedData = {
         category_id: testCategory.id,
         name: 'Test Feed Requiring Payment',
-        description: 'This feed creation should require payment',
+        description: 'This feed creation should require auth',
         tags: ['test', 'payment'],
       };
 
@@ -51,7 +52,7 @@ describe('X402 Payment Middleware', () => {
         body: JSON.stringify(newFeedData),
       });
 
-      expect(response.status).toBe(402);
+      expect(response.status).toBe(401);
 
       const contentType = response.headers.get('content-type');
       if (contentType?.includes('application/json')) {
@@ -60,7 +61,8 @@ describe('X402 Payment Middleware', () => {
       }
     });
 
-    it('should include x402 payment instructions in 402 response', async () => {
+    // Payment middleware disabled - now uses wallet auth which returns 401
+    it('should return 401 with error message when no auth provided', async () => {
       const newFeedData = {
         category_id: testCategory.id,
         name: 'Test Feed',
@@ -75,14 +77,14 @@ describe('X402 Payment Middleware', () => {
         body: JSON.stringify(newFeedData),
       });
 
-      expect(response.status).toBe(402);
+      expect(response.status).toBe(401);
 
       const data = await response.json();
       expect(data).toBeDefined();
       expect(typeof data).toBe('object');
     });
 
-    it('should not apply payment middleware to GET /v1/feeds', async () => {
+    it('should not apply auth middleware to GET /v1/feeds', async () => {
       const response = await app.request('/v1/feeds?page_size=20');
 
       expect(response.status).toBe(200);
@@ -95,7 +97,8 @@ describe('X402 Payment Middleware', () => {
   });
 
   describe('POST /v1/feeds/:id/entries - Entry Creation Payment Protection', () => {
-    it('should return 402 Payment Required when creating entry without payment', async () => {
+    // Payment middleware disabled - now uses wallet auth which returns 401
+    it('should return 401 Unauthorized when creating entry without auth', async () => {
       const entryData = {
         content_base64: generateTestContent('json'),
         mime_type: 'application/json',
@@ -116,7 +119,7 @@ describe('X402 Payment Middleware', () => {
         body: JSON.stringify(entryData),
       });
 
-      expect(response.status).toBe(402);
+      expect(response.status).toBe(401);
 
       const contentType = response.headers.get('content-type');
       if (contentType?.includes('application/json')) {
@@ -126,7 +129,7 @@ describe('X402 Payment Middleware', () => {
     });
 
 
-    it('should not apply payment middleware to GET /v1/feeds/:id/entries', async () => {
+    it('should not apply auth middleware to GET /v1/feeds/:id/entries', async () => {
       const response = await app.request(`/v1/feeds/${testFeed.id}/entries?page_size=20`);
 
       expect(response.status).toBe(200);
@@ -139,7 +142,8 @@ describe('X402 Payment Middleware', () => {
   });
 
   describe('Wildcard Path Matching', () => {
-    it('should apply middleware to nested feed entry paths with any feed_id', async () => {
+    // Payment middleware disabled - now uses wallet auth which returns 401
+    it('should require auth for nested feed entry paths with any feed_id', async () => {
       const anotherFeed = await createTestFeed(testPool, testWallet.id, testCategory.id);
 
       const entryData = {
@@ -156,7 +160,7 @@ describe('X402 Payment Middleware', () => {
         body: JSON.stringify(entryData),
       });
 
-      expect(response.status).toBe(402);
+      expect(response.status).toBe(401);
     });
 
   });

@@ -5,6 +5,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { useWallet } from '@/context/WalletContext';
 import { useToast } from '@/context/ToastContext';
 import { fileToBase64 } from '@/lib/utils';
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { CreateFeedDialogView } from './CreateFeedDialogView';
 
 interface CreateFeedDialogProps {
@@ -15,7 +16,7 @@ interface CreateFeedDialogProps {
 export function CreateFeedDialog({ isOpen, onClose }: CreateFeedDialogProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isConnected } = useWallet();
+  const { isConnected, address } = useWallet();
   const toast = useToast();
   const createFeed = useCreateFeed();
   const { data: categoriesResponse, isLoading: categoriesLoading } = useCategories();
@@ -140,6 +141,7 @@ export function CreateFeedDialog({ isOpen, onClose }: CreateFeedDialogProps) {
       };
 
       const createdFeed = await createFeed.mutateAsync(feedData);
+      trackEvent(AnalyticsEvents.CREATE_FEED, {}, address);
       toast.success('Feed created successfully!');
       onClose();
 

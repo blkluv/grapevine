@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useWallet } from '@/context/WalletContext';
 import { useToast } from '@/context/ToastContext';
 import { validateFileSize, fileToBase64 } from '@/lib/utils';
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import { UploadEntryModalView } from './UploadEntryModalView';
 import type { CreateEntryInput } from '@pinata/grapevine-sdk';
 
@@ -13,7 +14,7 @@ interface UploadEntryModalProps {
 }
 
 export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModalProps) {
-  const { isConnected } = useWallet();
+  const { isConnected, address } = useWallet();
   const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -173,6 +174,7 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
       console.log('[UploadEntryModal] - This will trigger useCreateEntry mutation');
       await onUpload(uploadData);
       console.log('[UploadEntryModal] ✅ Upload completed successfully');
+      trackEvent(AnalyticsEvents.CREATE_ENTRY, {}, address);
       toast.success('Entry uploaded successfully!');
       onClose();
     } catch (err) {

@@ -13,6 +13,7 @@ import { grapevineApiClient, type GrapevineEntry } from '@/services/grapevineApi
 import { FeedCard, type AnyFeed } from '@/components/FeedCard'
 import { EntriesTable } from '@/components/EntriesTable'
 import { Loader } from '@/components/ui'
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics'
 import sdk from '@farcaster/miniapp-sdk'
 import { useFarcaster } from '@/context/FarcasterContext'
 
@@ -196,6 +197,7 @@ export default function FeedEntries() {
         text: `Check out "${feed.name}" on Grapevine`,
         embeds: [feedUrl],
       })
+      trackEvent(AnalyticsEvents.SHARE_FEED_FARCASTER, { feedId: feedId || '' }, address)
     } catch (err) {
       console.log('[FeedEntries] Share failed (not in mini app context):', err)
     }

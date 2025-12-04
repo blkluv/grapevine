@@ -9,6 +9,7 @@ import { useDeleteEntry } from '@/hooks/useDeleteEntry'
 import { grapevineApiClient, type GrapevineEntry } from '@/services/grapevineApi'
 import { Button, ArrowWrapper, Loader } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics'
 import sdk from '@farcaster/miniapp-sdk'
 import { useFarcaster } from '@/context/FarcasterContext'
 
@@ -303,6 +304,18 @@ export default function EntryDetail() {
 
         const accessLinkResponse = await grapevineApiClient.getEntryAccessLink(feedId, entryId, authHeaders)
         window.open(accessLinkResponse.url, '_blank')
+
+        // Track analytics for HTML content based on access type
+        if (!entry.is_free) {
+          if (isOwner) {
+            trackEvent(AnalyticsEvents.VIEW_OWN_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+          } else if (hasPurchased) {
+            trackEvent(AnalyticsEvents.VIEW_PURCHASED_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+          } else {
+            // New purchase was just made (in the x402 flow above)
+            trackEvent(AnalyticsEvents.BUY_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+          }
+        }
         return
       }
 
@@ -380,6 +393,18 @@ export default function EntryDetail() {
       const url = URL.createObjectURL(blob)
       setContentUrl(url)
       setPurchasedContent({ blob, mimeType })
+
+      // Track analytics based on access type
+      if (entry.is_free) {
+        // Free content - no specific tracking needed
+      } else if (isOwner) {
+        trackEvent(AnalyticsEvents.VIEW_OWN_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+      } else if (hasPurchased) {
+        trackEvent(AnalyticsEvents.VIEW_PURCHASED_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+      } else {
+        // New purchase was just made
+        trackEvent(AnalyticsEvents.BUY_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+      }
     } catch (err) {
       setPurchaseError(err instanceof Error ? err.message : `Failed to ${entry.is_free ? 'fetch' : hasAccess ? 'load' : 'purchase'} resource`)
     } finally {
@@ -536,6 +561,7 @@ export default function EntryDetail() {
         text: `Check out "${entry.title || 'this entry'}" on Grapevine`,
         embeds: [entryUrl],
       })
+      trackEvent(AnalyticsEvents.SHARE_ENTRY_FARCASTER, { entryId: entryId || '', feedId: feedId || '' }, address)
     } catch (err) {
       console.log('[EntryDetail] Share failed (not in mini app context):', err)
     }
@@ -669,6 +695,7 @@ export default function EntryDetail() {
                         const gatewayUrl = `https://${import.meta.env.VITE_PINATA_GATEWAY}/x402/cid/${entry.cid}`
                         try {
                           await navigator.clipboard.writeText(gatewayUrl)
+                          trackEvent(AnalyticsEvents.COPY_LINK, { entryId: entryId || '', feedId: feedId || '' }, address)
                           toast.success('Link copied to clipboard!')
                         } catch (err) {
                           toast.error('Failed to copy link')

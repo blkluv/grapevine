@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect } from 'react'
 import { Play, Pause, SkipBack, SkipForward, StopCircle, Volume2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics'
+import { useWallet } from '@/context/WalletContext'
 
 // Neobrutalism styles
 const styles = {
@@ -21,6 +23,7 @@ interface MusicPlayerProps {
 }
 
 export function MusicPlayer({ className }: MusicPlayerProps) {
+  const { address } = useWallet()
   const audioRef = useRef<HTMLAudioElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
@@ -147,8 +150,10 @@ export function MusicPlayer({ className }: MusicPlayerProps) {
 
       if (isPlaying) {
         audioRef.current.pause()
+        trackEvent(AnalyticsEvents.MUSIC_PLAYER_PAUSE, {}, address)
       } else {
         await audioRef.current.play()
+        trackEvent(AnalyticsEvents.MUSIC_PLAYER_PLAY, {}, address)
       }
       setIsPlaying(!isPlaying)
     } catch (error) {

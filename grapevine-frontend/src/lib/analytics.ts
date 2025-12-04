@@ -18,6 +18,7 @@ export function trackEvent(
 // Event names as constants for consistency
 export const AnalyticsEvents = {
   CREATE_FEED: 'create_feed',
+  EDIT_FEED: 'edit_feed',
   CREATE_ENTRY: 'create_entry',
   BUY_RESOURCE: 'buy_resource',
   VIEW_PURCHASED_RESOURCE: 'view_purchased_resource',

@@ -3,6 +3,7 @@ import { useUpdateFeed, type UpdateFeedFormInput } from '@/hooks/useUpdateFeed';
 import { useWallet } from '@/context/WalletContext';
 import { Button, OriginalDialog } from '@/components/ui';
 import { fileToBase64 } from '@/lib/utils';
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 import type { Feed } from '@pinata/grapevine-sdk/dist/types';
 
 interface EditFeedDialogProps {
@@ -14,7 +15,7 @@ interface EditFeedDialogProps {
 const PINATA_GATEWAY = import.meta.env.VITE_PINATA_GATEWAY
 
 export function EditFeedDialog({ isOpen, onClose, feed }: EditFeedDialogProps) {
-  const { isConnected } = useWallet();
+  const { isConnected, address } = useWallet();
   const updateFeed = useUpdateFeed();
 
   const [formData, setFormData] = useState<UpdateFeedFormInput>({
@@ -136,6 +137,7 @@ export function EditFeedDialog({ isOpen, onClose, feed }: EditFeedDialogProps) {
       };
 
       await updateFeed.mutateAsync({ feedId: feed.id, data: feedData });
+      trackEvent(AnalyticsEvents.EDIT_FEED, {}, address);
       onClose();
     } catch (err) {
       if (err instanceof Error) {
@@ -185,7 +187,7 @@ export function EditFeedDialog({ isOpen, onClose, feed }: EditFeedDialogProps) {
       maxWidth="xl"
     >
       {/* Form */}
-      <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 bg-[#c0c0c0]">
+      <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 bg-white">
         <div className="p-4 space-y-4">
           {/* Wallet Connection Warning */}
           {!isConnected && (
@@ -370,22 +372,26 @@ export function EditFeedDialog({ isOpen, onClose, feed }: EditFeedDialogProps) {
         </div>
 
         {/* Form Actions */}
-        <div className="flex gap-4 p-4 border-t-2 border-[#808080] bg-[#c0c0c0]">
-          <button
+        <div className="flex gap-2 sm:gap-4 p-2 sm:p-4 border-t-4 border-black bg-white">
+          <Button
             type="button"
             onClick={onClose}
             disabled={updateFeed.isPending}
-            className="flex-1 px-6 py-3 border-4 border-black bg-white hover:bg-gray-100 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+            variant="secondary"
+            size="lg"
+            fullWidth
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={updateFeed.isPending || isUploadingImage || !isConnected}
-            className="flex-1 px-6 py-3 border-4 border-t-[var(--btn-primary-light)] border-l-[var(--btn-primary-light)] border-b-[var(--btn-primary-dark)] border-r-[var(--btn-primary-dark)] bg-[var(--btn-primary)] hover:bg-[var(--btn-primary-light)] text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+            variant="primary"
+            size="lg"
+            fullWidth
           >
             {isUploadingImage ? 'Processing...' : updateFeed.isPending ? 'Updating...' : 'Update Feed'}
-          </button>
+          </Button>
         </div>
       </form>
     </OriginalDialog>

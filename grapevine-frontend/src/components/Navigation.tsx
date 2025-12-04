@@ -1,7 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui'
-import grapevineIconBlack from "@/assets/img/Grapevine_Icon_Black.png";
-import grapevineIconWhite from "@/assets/img/Grapevine_Icon_White.png";
 
 // Neobrutalism styles
 const styles = {
@@ -9,14 +7,12 @@ const styles = {
   logoClass: 'font-mono font-black text-3xl lg:text-4xl uppercase tracking-tighter text-black',
   navContainer: 'flex flex-wrap items-center justify-center gap-3 lg:gap-4 bg-white p-3',
   buttonClass: 'min-w-[80px] lg:min-w-[150px] text-xs lg:text-sm px-3 lg:px-4',
-  iconHeight: 'h-5'
 }
 
 export function Navigation() {
   const location = useLocation()
 
   const navItems = [
-    { path: '/', label: 'Home' },
     { path: '/feeds', label: 'Feeds' },
     { path: '/top-sellers', label: 'Top Sellers' },
     { path: '/about', label: 'About' },
@@ -47,15 +43,7 @@ export function Navigation() {
               size="lg"
               className={styles.buttonClass}
             >
-              {item.path === '/' ? (
-                <img
-                  src={isActive(item.path) ? grapevineIconWhite : grapevineIconBlack}
-                  alt="Home"
-                  className={styles.iconHeight}
-                />
-              ) : (
-                item.label
-              )}
+              {item.label}
             </Button>
           </Link>
         ))}

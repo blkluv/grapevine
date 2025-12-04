@@ -1,5 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Feeds from './pages/Feeds'
 import FeedEntries from './pages/FeedEntries'
 import EntryDetail from './pages/EntryDetail'
@@ -18,7 +17,7 @@ function App() {
       <PageTitleProvider>
         <OriginalLayout>
         <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/feeds" replace />} />
         <Route path="/feeds" element={<Feeds />} />
         <Route path="/feeds/:feedId/entries" element={<FeedEntries />} />
         <Route path="/feeds/:feedId/entries/:entryId" element={<EntryDetail />} />
@@ -26,6 +25,7 @@ function App() {
         <Route path="/user/:walletAddress" element={<UserProfile />} />
         <Route path="/top-sellers" element={<TopSellers />} />
         <Route path="/about" element={<About />} />
+        <Route path="*" element={<Navigate to="/feeds" replace />} />
         </Routes>
         </OriginalLayout>
       </PageTitleProvider>

@@ -7,10 +7,11 @@ import { Button, Pagination, Loader } from '@/components/ui'
 import { useWallet } from '@/context/WalletContext'
 import { useGrapevineFeeds } from '@/hooks/useGrapevineFeeds'
 import { useWalletByAddress } from '@/hooks/useWalletByAddress'
+import { useTrending, useMostPopular } from '@/hooks/useLeaderboards'
 
 // Filter type for URL query params - extensible for future filters
 type FeedFilters = {
-  view?: 'all' | 'my'
+  view?: 'all' | 'trending' | 'popular' | 'my'
   category?: string
   // Future filters can be added here:
   // tags?: string
@@ -40,9 +41,22 @@ export default function Feeds() {
 
   // Derive filters directly from URL params (single source of truth)
   const filters: FeedFilters = {
-    view: (searchParams.get('view') as 'all' | 'my') || 'all',
+    view: (searchParams.get('view') as 'all' | 'trending' | 'popular' | 'my') || 'all',
     category: searchParams.get('category') || undefined,
   }
+
+  // Fetch trending and popular feeds
+  const { data: trendingData, isLoading: trendingLoading } = useTrending(
+    { page_size: '10' },
+    { enabled: filters.view === 'trending' }
+  )
+  const { data: popularData, isLoading: popularLoading } = useMostPopular(
+    { page_size: '10', period: 'all' },
+    { enabled: filters.view === 'popular' }
+  )
+
+  const trendingFeeds = trendingData?.data ?? []
+  const popularFeeds = popularData?.data ?? []
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -77,6 +91,9 @@ export default function Feeds() {
 
   // Compute API params based on filters
   const showMyFeeds = filters.view === 'my'
+  const showAllFeeds = filters.view === 'all'
+  const showTrending = filters.view === 'trending'
+  const showPopular = filters.view === 'popular'
   const currentPageToken = pageTokens[pageTokens.length - 1]
 
   // For "My Feeds", we need a valid wallet ID to query
@@ -92,13 +109,15 @@ export default function Feeds() {
   // Skip query if:
   // - Viewing "My Feeds" and still loading wallet data
   // - Viewing "My Feeds" and wallet isn't registered (no walletId)
+  // - Viewing trending or popular (use leaderboard hooks instead)
   const shouldSkipMyFeedsQuery = showMyFeeds && (walletLoading || !walletId)
+  const shouldSkipAllFeedsQuery = showTrending || showPopular
 
-  // Fetch feeds from the real API
+  // Fetch feeds from the real API (only for 'all' and 'my' views)
   const { data, isLoading: loading, error: queryError } = useGrapevineFeeds({
     ...feedQueryParams,
   }, {
-    enabled: !shouldSkipMyFeedsQuery,
+    enabled: !shouldSkipMyFeedsQuery && !shouldSkipAllFeedsQuery,
   })
 
   console.log("feeds data", data)
@@ -168,24 +187,83 @@ export default function Feeds() {
           <div className="flex gap-2 mb-8">
             <Button
               onClick={() => updateFilters({ view: 'all' })}
-              variant={filters.view === 'all' ? 'primary' : 'secondary'}
+              variant={showAllFeeds ? 'primary' : 'secondary'}
               size="lg"
             >
               All Feeds
             </Button>
+            <Button
+              onClick={() => updateFilters({ view: 'trending' })}
+              variant={showTrending ? 'primary' : 'secondary'}
+              size="lg"
+            >
+              Trending
+            </Button>
+            <Button
+              onClick={() => updateFilters({ view: 'popular' })}
+              variant={showPopular ? 'primary' : 'secondary'}
+              size="lg"
+            >
+              Popular
+            </Button>
             {isConnected && (
               <Button
                 onClick={() => updateFilters({ view: 'my' })}
-                variant={filters.view === 'my' ? 'primary' : 'secondary'}
+                variant={showMyFeeds ? 'primary' : 'secondary'}
                 size="lg"
+                className="ml-auto"
               >
                 My Feeds
               </Button>
             )}
           </div>
 
-          {/* Loading State */}
-          {(loading || (showMyFeeds && walletLoading)) && (
+          {/* Trending View */}
+          {showTrending && (
+            <>
+              {trendingLoading ? (
+                <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
+                  <Loader size="lg" />
+                  <p className="mt-4 text-xl font-bold uppercase">Loading Trending...</p>
+                </div>
+              ) : trendingFeeds.length === 0 ? (
+                <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
+                  <p className="text-xl font-bold uppercase">No Trending Feeds</p>
+                </div>
+              ) : (
+                <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
+                  {trendingFeeds.map((feed: any) => (
+                    <FeedCard key={feed.id} feed={feed} compact={true} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Popular View */}
+          {showPopular && (
+            <>
+              {popularLoading ? (
+                <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
+                  <Loader size="lg" />
+                  <p className="mt-4 text-xl font-bold uppercase">Loading Popular...</p>
+                </div>
+              ) : popularFeeds.length === 0 ? (
+                <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
+                  <p className="text-xl font-bold uppercase">No Popular Feeds</p>
+                </div>
+              ) : (
+                <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
+                  {popularFeeds.map((feed: any) => (
+                    <FeedCard key={feed.id} feed={feed} compact={true} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* All Feeds / My Feeds Loading State */}
+          {(showAllFeeds || showMyFeeds) && (loading || (showMyFeeds && walletLoading)) && (
             <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
               <Loader size="lg" />
               <p className="mt-4 text-xl font-bold uppercase">Loading Feeds...</p>
@@ -203,15 +281,15 @@ export default function Feeds() {
           )}
 
           {/* Error State */}
-          {error && !shouldSkipMyFeedsQuery && (
+          {error && !shouldSkipMyFeedsQuery && !shouldSkipAllFeedsQuery && (
             <div className="bg-red-100 border-4 border-red-600 p-8 shadow-[8px_8px_0px_0px_#000] mb-6">
               <p className="text-xl font-bold uppercase text-red-800 mb-2">Error</p>
               <p className="text-lg">{error}</p>
             </div>
           )}
 
-          {/* Feeds Grid */}
-          {!loading && !walletLoading && !error && !shouldSkipMyFeedsQuery && (
+          {/* All Feeds / My Feeds Grid */}
+          {(showAllFeeds || showMyFeeds) && !loading && !walletLoading && !error && !shouldSkipMyFeedsQuery && (
             <div>
               {feeds.length === 0 ? (
                 <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_#000] text-center">
@@ -239,8 +317,8 @@ export default function Feeds() {
             </div>
           )}
 
-          {/* Pagination */}
-          {!loading && !walletLoading && !error && !shouldSkipMyFeedsQuery && feeds.length > 0 && (currentPage > 1 || hasMore) && (
+          {/* Pagination (only for All Feeds / My Feeds) */}
+          {(showAllFeeds || showMyFeeds) && !loading && !walletLoading && !error && !shouldSkipMyFeedsQuery && feeds.length > 0 && (currentPage > 1 || hasMore) && (
             <Pagination
               currentPage={currentPage}
               totalPages={currentPage + (hasMore ? 1 : 0)}

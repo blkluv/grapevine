@@ -12,6 +12,7 @@ import { ThemeContextProvider } from './context/ThemeContext'
 import { FarcasterProvider } from './context/FarcasterContext'
 import './index.css'
 import App from './App.tsx'
+import { Analytics } from "@vercel/analytics/react"
 
 // Create a client
 const queryClient = new QueryClient({
@@ -53,5 +54,6 @@ createRoot(document.getElementById('root')!).render(
         </QueryClientProvider>
       </PrivyProvider>
     </FarcasterProvider>
+    <Analytics />
   </StrictMode>,
 )

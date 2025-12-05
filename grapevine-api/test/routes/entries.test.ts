@@ -631,6 +631,34 @@ describe('Feed Entries API', () => {
         expect(data.message || data.error).toBeTruthy();
       }
     });
+
+    it('should decrement feed total_entries count when entry is deleted', async () => {
+      // Create entries and verify the feed count increases
+      const entry1 = await createTestEntry(testPool, testFeed.id, testPaymentInstruction.id);
+      await createTestEntry(testPool, testFeed.id, testPaymentInstruction.id);
+
+      // Get the feed and verify entry count
+      const feedBeforeDelete = await app.request(`/v1/feeds/${testFeed.id}`);
+      const feedDataBefore = await feedBeforeDelete.json();
+      const initialCount = feedDataBefore.total_entries;
+      expect(initialCount).toBeGreaterThanOrEqual(2);
+
+      // Delete one entry
+      const deleteResponse = await app.request(
+        `/v1/feeds/${testFeed.id}/entries/${entry1.id}`,
+        {
+          method: 'DELETE',
+          headers: createWalletAuthHeaders(testWallet.wallet_address),
+        }
+      );
+      expect(deleteResponse.status).toBe(204);
+
+      // Get the feed again and verify count decreased
+      const feedAfterDelete = await app.request(`/v1/feeds/${testFeed.id}`);
+      const feedDataAfter = await feedAfterDelete.json();
+      expect(feedDataAfter.total_entries).toBe(initialCount - 1);
+    });
+
   });
 
   describe('POST /v1/feeds/:feed_id/entries/:entry_id/access-link', () => {

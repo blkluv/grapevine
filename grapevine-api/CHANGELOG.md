@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.10](https://github.com/PinataCloud/grapevine-private/compare/grapevine-api-v0.1.9...grapevine-api-v0.1.10) (2025-12-05)
+
+
+### Features
+
+* remove payment middlewear ([66cb944](https://github.com/PinataCloud/grapevine-private/commit/66cb94491c9c2555eca1ba9ea10db4934d1cab71))
+
+
+### Bug Fixes
+
+* decrement feed entries count if entry is deleted ([724384c](https://github.com/PinataCloud/grapevine-private/commit/724384c92283b1a89e575921dd37fb4a64f30306))
+* decrement feed entries count if entry is deleted ([0ec0aba](https://github.com/PinataCloud/grapevine-private/commit/0ec0aba66b9bcb5480102cd34a2f8f3f56fdbf11))
+* remove payment middlewear ([d3581ed](https://github.com/PinataCloud/grapevine-private/commit/d3581ed2f9f8ec58ad699c9160bf9ade598054ed))
+* updates tests ([979b5cc](https://github.com/PinataCloud/grapevine-private/commit/979b5cc310212b2300bdae3d86689fec1eaa0029))
+
 ## [0.1.9](https://github.com/PinataCloud/grapevine/compare/grapevine-api-v0.1.8...grapevine-api-v0.1.9) (2025-11-26)
 
 

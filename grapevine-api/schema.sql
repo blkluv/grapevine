@@ -368,6 +368,24 @@ AFTER INSERT ON gv_feed_entries
 FOR EACH ROW
 EXECUTE FUNCTION update_feed_entry_count();
 
+-- Update feed entry count when entry is soft-deleted
+CREATE OR REPLACE FUNCTION update_feed_entry_count_on_soft_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE gv_feeds
+    SET total_entries = GREATEST(total_entries - 1, 0),
+        updated_at = EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::BIGINT
+    WHERE id = NEW.feed_id;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_feed_entry_count_on_soft_delete
+AFTER UPDATE OF is_active ON gv_feed_entries
+FOR EACH ROW
+WHEN (OLD.is_active = true AND NEW.is_active = false)
+EXECUTE FUNCTION update_feed_entry_count_on_soft_delete();
+
 -- Update timestamp on row update
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

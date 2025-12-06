@@ -1,5 +1,5 @@
 {
-  "name": "grapevine-api",
+  "name": "5dtok-api",
   "version": "0.1.9",
   "description": "Decentralized Data Feeds API",
   "main": "dist/index.js",
@@ -23,7 +23,7 @@
     "postgresql",
     "web3"
   ],
-  "author": "engineering@pinata.cloud",
+  "author": "hahz5d@pm.me",
   "license": "MIT",
   "dependencies": {
     "@coinbase/x402": "^0.7.1",

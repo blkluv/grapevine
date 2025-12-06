@@ -3,22 +3,23 @@ import { CategoriesSidebarView } from './CategoriesSidebar';
 import { BrowserRouter } from 'react-router-dom';
 
 const mockCategories = [
-  { id: '1', name: 'Technology' },
-  { id: '2', name: 'Sports' },
-  { id: '3', name: 'Entertainment' },
-  { id: '4', name: 'Politics' },
-  { id: '5', name: 'Science' },
-  { id: '6', name: 'Health' },
-  { id: '7', name: 'Business' },
-  { id: '8', name: 'Travel' },
+  { id: '1', name: 'food' },
+  { id: '2', name: 'healxyz' },
+  { id: '3', name: 'musik' },
+  { id: '4', name: 'sex' },
+  { id: '5', name: 'magic' },
+  { id: '6', name: 'reviews' },
+  { id: '7', name: 'truth' },
+  { id: '8', name: 'money' },
+  { id: '9', name: 'relationships' },
 ];
 
 export const Default: Story = () => {
   return (
     <BrowserRouter>
       <div className="p-8">
-        <h2 className="text-2xl font-bold mb-4">Categories Sidebar</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="mb-4 text-2xl font-bold">Categories Sidebar</h2>
+        <p className="mb-6 text-gray-600">
           Switch themes using the dropdown in the sidebar to see different styles.
           Try the <strong>neobrutalism</strong> theme for bold, high-contrast design!
         </p>
@@ -26,7 +27,7 @@ export const Default: Story = () => {
         <div className="flex gap-8">
           {/* With categories */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">With Categories</h3>
+            <h3 className="mb-4 text-lg font-semibold">With Categories</h3>
             <CategoriesSidebarView
               categories={mockCategories}
               categoriesLoading={false}
@@ -35,7 +36,7 @@ export const Default: Story = () => {
 
           {/* Loading state */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Loading State</h3>
+            <h3 className="mb-4 text-lg font-semibold">Loading State</h3>
             <CategoriesSidebarView
               categories={[]}
               categoriesLoading={true}
@@ -44,7 +45,7 @@ export const Default: Story = () => {
 
           {/* Empty state */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Empty State</h3>
+            <h3 className="mb-4 text-lg font-semibold">Empty State</h3>
             <CategoriesSidebarView
               categories={[]}
               categoriesLoading={false}

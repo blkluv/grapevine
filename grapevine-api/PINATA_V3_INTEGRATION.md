@@ -187,7 +187,7 @@ Clients calling the create entry endpoint must:
 ```typescript
 // Prepare content
 const content = {
-  message: "Hello, Grapevine!",
+  message: "Hello, 5DTOK!",
   timestamp: Date.now()
 };
 

@@ -90,7 +90,7 @@ export function withMiddlewares(app: OpenAPIHono) {
   //     "/v1/feeds": {
   //       price: config.x402.feedCreationPrice,
   //       network: config.x402.network as 'base' | 'base-sepolia',
-  //       config: { description: "Create a new feed on Grapevine" }
+  //       config: { description: "Create a new feed on 5DTOK" }
   //     }
   //   },
   //   facilitator
@@ -103,7 +103,7 @@ export function withMiddlewares(app: OpenAPIHono) {
   //     "/v1/feeds/*/entries": {
   //       price: config.x402.entryCreationPrice,
   //       network: config.x402.network as 'base' | 'base-sepolia',
-  //       config: { description: "Create a new entry in a feed on Grapevine" }
+  //       config: { description: "Create a new entry in a feed on 5DTOK" }
   //     }
   //   },
   //   facilitator

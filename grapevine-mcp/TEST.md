@@ -42,9 +42,9 @@ Configure in `.env` or pass as environment variables:
 
 ### Optional
 
-- `TEST_SERVER` - API server URL (default: `https://api.grapevine.fyi`)
-  - Production: `https://api.grapevine.fyi`
-  - Development: `https://testnet-api.grapevine.fyi`
+- `TEST_SERVER` - API server URL (default: `https://api.5dtok.com`)
+  - Production: `https://api.5dtok.com`
+  - Development: `https://testnet-api.5dtok.com`
   - Local: `http://localhost:8080`
 
 - `TEST_CHAIN` - Blockchain network (default: `base`)
@@ -79,7 +79,7 @@ TEST_MAX_PAYMENT=1000000
 ============================================================
 🚀 Grapevine API Basic Test
 ============================================================
-Server: https://api.grapevine.fyi
+Server: https://api.5dtok.com
 Chain: base
 ✅ Payment client initialized
 
@@ -125,8 +125,8 @@ Entry ID: 019a6fb5-38e2-7efb-8ca8-67bab64b701c
 Content CID: bafkreiabup7pcuzwxfebp4vwb2evt3ludtd6lkvoza27ccflsryh2neckq
 
 You can now:
-- View feed: https://api.grapevine.fyi/v1/feeds/019a6fae-b10b-7e75-8b75-bc4931ef61de
-- View entry: https://api.grapevine.fyi/v1/feeds/019a6fae-b10b-7e75-8b75-bc4931ef61de/entries/019a6fb5-38e2-7efb-8ca8-67bab64b701c
+- View feed: https://api.5dtok.com/v1/feeds/019a6fae-b10b-7e75-8b75-bc4931ef61de
+- View entry: https://api.5dtok.com/v1/feeds/019a6fae-b10b-7e75-8b75-bc4931ef61de/entries/019a6fb5-38e2-7efb-8ca8-67bab64b701c
 - Access content via IPFS: ipfs://bafkreiabup7pcuzwxfebp4vwb2evt3ludtd6lkvoza27ccflsryh2neckq
 ```
 

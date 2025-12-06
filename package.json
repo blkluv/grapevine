@@ -1,8 +1,8 @@
 {
-  "name": "grapevine",
+  "name": "5dtok-mcp",
   "version": "0.1.9",
   "private": true,
-  "description": "Decentralized Data Feeds Platform - Monorepo",
+  "description": "Decentralized Data Feeds Platform",
   "packageManager": "pnpm@10.22.0",
   "workspaces": [
     "grapevine-api",
@@ -33,7 +33,7 @@
     "ipfs",
     "prediction-markets"
   ],
-  "author": "engineering@pinata.cloud",
+  "author": "hahz5d@pm.me",
   "license": "MIT",
   "devDependencies": {
     "prettier": "^3.4.2"

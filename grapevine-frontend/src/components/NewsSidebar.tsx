@@ -1,9 +1,9 @@
 import gif1 from '@/assets/img/news1.gif'
 import { useQuery } from '@tanstack/react-query'
 
-const X402_PROD_API_URL = 'https://api.grapevine.fyi/v1/feeds/019a74da-d919-754b-bce6-760f228e147b/entries?page_size=5&is_free=true'
-const GRAPEVINE_NEWS_PROD_API_URL = 'https://api.grapevine.fyi/v1/feeds/019a79a1-6d52-7739-8da7-e3fd5439b5fa/entries?page_size=5&is_free=true'
-const GATEWAY_URL = 'https://gateway.grapevine.fyi/x402/cid'
+const X402_PROD_API_URL = 'https://api.5dtok.com/v1/feeds/019a74da-d919-754b-bce6-760f228e147b/entries?page_size=5&is_free=true'
+const GRAPEVINE_NEWS_PROD_API_URL = 'https://api.5dtok.com/v1/feeds/019a79a1-6d52-7739-8da7-e3fd5439b5fa/entries?page_size=5&is_free=true'
+const GATEWAY_URL = 'https://gateway.pinata.cloud/x402/cid'
 
 type EntryContent = {
   hash: string

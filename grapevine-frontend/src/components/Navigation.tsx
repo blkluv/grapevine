@@ -34,7 +34,7 @@ export function Navigation() {
     <div className={styles.wrapper}>
       <Link to="/" className="no-underline">
         <h1 className={styles.logoClass}>
-          GRAPEVINE
+          5DTOK
         </h1>
       </Link>
 

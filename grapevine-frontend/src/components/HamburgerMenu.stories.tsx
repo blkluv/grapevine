@@ -4,14 +4,15 @@ import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 const mockCategories = [
-  { id: '1', name: 'Technology' },
-  { id: '2', name: 'Sports' },
-  { id: '3', name: 'Entertainment' },
-  { id: '4', name: 'Politics' },
-  { id: '5', name: 'Science' },
-  { id: '6', name: 'Health' },
-  { id: '7', name: 'Business' },
-  { id: '8', name: 'Travel' },
+  { id: '1', name: 'food' },
+  { id: '2', name: 'healxyz' },
+  { id: '3', name: 'musik' },
+  { id: '4', name: 'sex' },
+  { id: '5', name: 'magic' },
+  { id: '6', name: 'reviews' },
+  { id: '7', name: 'truth' },
+  { id: '8', name: 'money' },
+  { id: '9', name: 'relationships' },
 ];
 
 const MockWalletPill = () => {
@@ -38,7 +39,7 @@ const MockWalletPill = () => {
 
   if (themeKey === 'modern') {
     return (
-      <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-300 text-sm">
+      <div className="px-4 py-2 text-sm text-gray-300 bg-gray-800 border border-gray-700 rounded-lg">
         0x1234...5678
       </div>
     );
@@ -57,15 +58,15 @@ export const Default: Story = () => {
   return (
     <BrowserRouter>
       <div className="p-8">
-        <h2 className="text-2xl font-bold mb-4">Hamburger Menu (Mobile)</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="mb-4 text-2xl font-bold">Hamburger Menu (Mobile)</h2>
+        <p className="mb-6 text-gray-600">
           Switch themes using the dropdown in the sidebar to see different styles.
           The menu is shown open by default in this story for demonstration.
         </p>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-2">Theme Variations:</h3>
-          <ul className="list-disc pl-6 space-y-2 text-sm text-gray-600">
+          <h3 className="mb-2 text-lg font-semibold">Theme Variations:</h3>
+          <ul className="pl-6 space-y-2 text-sm text-gray-600 list-disc">
             <li><strong>Default:</strong> 90s Windows style with hard borders, black shadows, and CategoriesSidebar component</li>
             <li><strong>Modern:</strong> Dark theme with subtle borders, smooth transitions, and themed CategoriesSidebar</li>
           </ul>
@@ -76,16 +77,16 @@ export const Default: Story = () => {
         </div>
 
         {/* Interactive Controls */}
-        <div className="mb-8 flex gap-4">
+        <div className="flex gap-4 mb-8">
           <button
             onClick={() => setIsOpen(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
           >
             Open Menu
           </button>
           <button
             onClick={() => setIsOpen(false)}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            className="px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600"
           >
             Close Menu
           </button>

@@ -118,7 +118,6 @@ export interface paths {
                             /** @enum {string} */
                             wallet_address_network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
                             username: string | null;
-                            /** Format: uri */
                             picture_url: string | null;
                         };
                     };
@@ -205,7 +204,6 @@ export interface paths {
                             /** @enum {string} */
                             wallet_address_network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
                             username: string | null;
-                            /** Format: uri */
                             picture_url: string | null;
                         };
                     };
@@ -303,7 +301,6 @@ export interface paths {
                             /** @enum {string} */
                             wallet_address_network: "base" | "base-sepolia" | "ethereum" | "ethereum-sepolia" | "polygon" | "polygon-amoy";
                             username: string | null;
-                            /** Format: uri */
                             picture_url: string | null;
                         };
                     };
@@ -639,6 +636,19 @@ export interface paths {
                         };
                     };
                 };
+                /** @description Bad request - invalid query parameters */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
                 /** @description Internal server error */
                 500: {
                     headers: {
@@ -657,14 +667,22 @@ export interface paths {
         put?: never;
         /**
          * Create feed
-         * @description Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-payment headers.
+         * @description Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-auth headers.
          */
         post: {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description X402 Payment header for payment verification */
-                    "x-payment": string;
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
                 };
                 path?: never;
                 cookie?: never;
@@ -863,12 +881,23 @@ export interface paths {
         post?: never;
         /**
          * Delete feed
-         * @description Soft delete a feed and all its associated entries by setting is_active to false. The feed and entry records remain in the system but will no longer appear in active feed listings.
+         * @description Soft delete a feed and all its associated entries by setting is_active to false. The feed and entry records remain in the system but will no longer appear in active feed listings. Requires wallet authentication and feed ownership verification.
          */
         delete: {
             parameters: {
                 query?: never;
-                header?: never;
+                header: {
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
+                };
                 path: {
                     feed_id: string;
                 };
@@ -882,6 +911,32 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+                /** @description Unauthorized - signature verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - wallet does not own this feed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
                 };
                 /** @description Feed not found */
                 404: {
@@ -1148,8 +1203,16 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description X402 Payment header for payment verification */
-                    "x-payment": string;
+                    /** @description Ethereum wallet address (0x prefixed) */
+                    "x-wallet-address": string;
+                    /** @description Cryptographic signature (hex format) */
+                    "x-signature": string;
+                    /** @description The signed message (base64 encoded if it contains newlines) */
+                    "x-message": string;
+                    /** @description Unix timestamp in seconds */
+                    "x-timestamp": string;
+                    /** @description Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy) */
+                    "x-chain-id"?: string;
                 };
                 path: {
                     feed_id: string;
@@ -1483,7 +1546,7 @@ export interface paths {
         put?: never;
         /**
          * Create private access link for entry
-         * @description Creates a time-limited presigned URL for accessing a private feed entry. Requires wallet signature authentication to verify the user is authorized.
+         * @description Creates a time-limited presigned URL for accessing a private feed entry. Requires wallet signature authentication. Access is granted if the user is the feed owner, if the entry is free, or if the user has purchased the entry.
          */
         post: {
             parameters: {
@@ -1533,6 +1596,19 @@ export interface paths {
                 };
                 /** @description Unauthorized - wallet signature verification failed */
                 401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                            message: string;
+                            details?: unknown;
+                        };
+                    };
+                };
+                /** @description Forbidden - user must have purchased the entry */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -2173,8 +2249,8 @@ export interface paths {
                             data: {
                                 rank: string;
                                 /** Format: uuid */
-                                feed_id: string;
-                                feed_name: string;
+                                id: string;
+                                name: string;
                                 /** Format: uuid */
                                 owner_id: string;
                                 owner_username: string | null;
@@ -2190,8 +2266,8 @@ export interface paths {
                                 total_purchases: string;
                                 total_revenue: string;
                                 unique_buyers: string;
-                                feed_created_at: number;
-                                feed_updated_at: number;
+                                created_at: number;
+                                updated_at: number;
                             }[];
                             period: string;
                         };
@@ -2472,8 +2548,8 @@ export interface paths {
                             data: {
                                 rank: string;
                                 /** Format: uuid */
-                                feed_id: string;
-                                feed_name: string;
+                                id: string;
+                                name: string;
                                 /** Format: uuid */
                                 owner_id: string;
                                 owner_username: string | null;

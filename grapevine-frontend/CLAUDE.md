@@ -16,8 +16,8 @@ This filters out verbose rollup/privy warnings and only shows errors and success
 
 ## Project Overview
 Frontend for Grapevine, an x402 experiment for monetizing file access through paid endpoints.
-- **Backend dev API**: https://api.grapevine.markets
-- **Backend prod API**: https://api.grapevine.fyi
+- **Backend dev API**: https://markets.5dtok.com
+- **Backend prod API**: https://api.5dtok.com
 - **Stack**: React 19, TypeScript, Vite, Tailwind CSS v4
 - **Auth**: Privy (wallet management) + Wagmi (message signing)
 - **State**: React Query (TanStack Query)

@@ -2,7 +2,7 @@ import createClient from 'openapi-fetch';
 import type { paths } from '../../types/api';
 
 // Grapevine API Integration
-const BACKEND_URL = import.meta.env.VITE_GRAPEVINE_BACKEND_URL || 'http://localhost:3000';
+const BACKEND_URL = import.meta.env.VITE_GRAPEVINE_BACKEND_URL || 'https://markets.5dtok.com';
 
 // Create the type-safe API client
 const client = createClient<paths>({ baseUrl: BACKEND_URL });

@@ -186,8 +186,7 @@
                     "picture_url": {
                       "type": "string",
                       "nullable": true,
-                      "maxLength": 2048,
-                      "format": "uri"
+                      "maxLength": 2048
                     }
                   },
                   "required": [
@@ -406,8 +405,7 @@
                     "picture_url": {
                       "type": "string",
                       "nullable": true,
-                      "maxLength": 2048,
-                      "format": "uri"
+                      "maxLength": 2048
                     }
                   },
                   "required": [
@@ -609,8 +607,7 @@
                     "picture_url": {
                       "type": "string",
                       "nullable": true,
-                      "maxLength": 2048,
-                      "format": "uri"
+                      "maxLength": 2048
                     }
                   },
                   "required": [
@@ -1378,6 +1375,35 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request - invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "details": {
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -1414,17 +1440,65 @@
           "Feeds"
         ],
         "summary": "Create feed",
-        "description": "Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-payment headers.",
+        "description": "Create a new data feed with specified category, name, description, tags, and optional image. Creates a Pinata storage group using the group ID as the feed ID. The authenticated wallet becomes the feed owner and is automatically created on Base network if it does not exist. Existing wallets must be on Base chain. Enforces maximum feed limit per wallet. Requires wallet authentication via x-auth headers.",
         "parameters": [
           {
             "schema": {
               "type": "string",
-              "description": "X402 Payment header for payment verification",
-              "example": "eyJ2ZXJzaW9uIjoxLCJuZXR3b3JrIjoiYmFzZSIsInBheWxvYWQiOnsicHJpY2UiOnsicGF5bWVudF9pbnN0cnVjdGlvbjoiMGU2YzI3YjAtY2E3ZS00Y2Y0LTg4ZjItY2E0ZjI3ZjYzNzA0IiwiYW1vdW50IjoiMTAwMDAwMDAwMDAiLCJhc3NldCI6IndlYiIsInBheV90byI6IjB4NzQyZDM1Q2M2NjRDMDA1MzI5MjVhM2I4NDRiYmM5ZTU5NWYwYkViIiwiYXV0aG9yaXphdGlvbiI6eyJ0eXBlIjoiRXZtQXV0aCIsImZyb20iOiIweDg2RjE2QjEwNDhDMjRCMkE3NDU2RkE3QjA3RkE3N0E3IiwidG8iOiIweDc0MmQzNUNjNjY0QzA1MzI5MjVhM2I4NDRiYjljZTdlNTk1ZjBiZWIiLCibm9uY2UiOiIxMjM0NTY3ODkwIn19fX0="
+              "minLength": 42,
+              "maxLength": 42,
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "description": "Ethereum wallet address (0x prefixed)",
+              "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
             },
             "required": true,
-            "description": "X402 Payment header for payment verification",
-            "name": "x-payment",
+            "description": "Ethereum wallet address (0x prefixed)",
+            "name": "x-wallet-address",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]+$",
+              "description": "Cryptographic signature (hex format)",
+              "example": "0x..."
+            },
+            "required": true,
+            "description": "Cryptographic signature (hex format)",
+            "name": "x-signature",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "The signed message (base64 encoded if it contains newlines)",
+              "example": "R3JhcGV2aW5lIEF1dGhlbnRpY2F0aW9u..."
+            },
+            "required": true,
+            "description": "The signed message (base64 encoded if it contains newlines)",
+            "name": "x-message",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Unix timestamp in seconds",
+              "example": "1735689600"
+            },
+            "required": true,
+            "description": "Unix timestamp in seconds",
+            "name": "x-timestamp",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy)",
+              "example": "8453"
+            },
+            "required": false,
+            "description": "Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy)",
+            "name": "x-chain-id",
             "in": "header"
           }
         ],
@@ -2256,7 +2330,7 @@
           "Feeds"
         ],
         "summary": "Delete feed",
-        "description": "Soft delete a feed and all its associated entries by setting is_active to false. The feed and entry records remain in the system but will no longer appear in active feed listings.",
+        "description": "Soft delete a feed and all its associated entries by setting is_active to false. The feed and entry records remain in the system but will no longer appear in active feed listings. Requires wallet authentication and feed ownership verification.",
         "parameters": [
           {
             "schema": {
@@ -2266,11 +2340,128 @@
             "required": true,
             "name": "feed_id",
             "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 42,
+              "maxLength": 42,
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "description": "Ethereum wallet address (0x prefixed)",
+              "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+            },
+            "required": true,
+            "description": "Ethereum wallet address (0x prefixed)",
+            "name": "x-wallet-address",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]+$",
+              "description": "Cryptographic signature (hex format)",
+              "example": "0x..."
+            },
+            "required": true,
+            "description": "Cryptographic signature (hex format)",
+            "name": "x-signature",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "The signed message (base64 encoded if it contains newlines)",
+              "example": "R3JhcGV2aW5lIEF1dGhlbnRpY2F0aW9u..."
+            },
+            "required": true,
+            "description": "The signed message (base64 encoded if it contains newlines)",
+            "name": "x-message",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Unix timestamp in seconds",
+              "example": "1735689600"
+            },
+            "required": true,
+            "description": "Unix timestamp in seconds",
+            "name": "x-timestamp",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy)",
+              "example": "8453"
+            },
+            "required": false,
+            "description": "Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy)",
+            "name": "x-chain-id",
+            "in": "header"
           }
         ],
         "responses": {
           "204": {
             "description": "Feed deleted"
+          },
+          "401": {
+            "description": "Unauthorized - signature verification failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "details": {
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - wallet does not own this feed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "details": {
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "message"
+                  ]
+                }
+              }
+            }
           },
           "404": {
             "description": "Feed not found",
@@ -2607,12 +2798,60 @@
           {
             "schema": {
               "type": "string",
-              "description": "X402 Payment header for payment verification",
-              "example": "eyJ2ZXJzaW9uIjoxLCJuZXR3b3JrIjoiYmFzZSIsInBheWxvYWQiOnsicHJpY2UiOnsicGF5bWVudF9pbnN0cnVjdGlvbjoiMGU2YzI3YjAtY2E3ZS00Y2Y0LTg4ZjItY2E0ZjI3ZjYzNzA0IiwiYW1vdW50IjoiMTAwMDAwMDAwMDAiLCJhc3NldCI6IndlYiIsInBheV90byI6IjB4NzQyZDM1Q2M2NjRDMDA1MzI5MjVhM2I4NDRiYmM5ZTU5NWYwYkViIiwiYXV0aG9yaXphdGlvbiI6eyJ0eXBlIjoiRXZtQXV0aCIsImZyb20iOiIweDg2RjE2QjEwNDhDMjRCMkE3NDU2RkE3QjA3RkE3N0E3IiwidG8iOiIweDc0MmQzNUNjNjY0QzA1MzI5MjVhM2I4NDRiYjljZTdlNTk1ZjBiZWIiLCibm9uY2UiOiIxMjM0NTY3ODkwIn19fX0="
+              "minLength": 42,
+              "maxLength": 42,
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "description": "Ethereum wallet address (0x prefixed)",
+              "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
             },
             "required": true,
-            "description": "X402 Payment header for payment verification",
-            "name": "x-payment",
+            "description": "Ethereum wallet address (0x prefixed)",
+            "name": "x-wallet-address",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]+$",
+              "description": "Cryptographic signature (hex format)",
+              "example": "0x..."
+            },
+            "required": true,
+            "description": "Cryptographic signature (hex format)",
+            "name": "x-signature",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "The signed message (base64 encoded if it contains newlines)",
+              "example": "R3JhcGV2aW5lIEF1dGhlbnRpY2F0aW9u..."
+            },
+            "required": true,
+            "description": "The signed message (base64 encoded if it contains newlines)",
+            "name": "x-message",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Unix timestamp in seconds",
+              "example": "1735689600"
+            },
+            "required": true,
+            "description": "Unix timestamp in seconds",
+            "name": "x-timestamp",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy)",
+              "example": "8453"
+            },
+            "required": false,
+            "description": "Chain ID for network detection (optional). Supported: 8453 (base), 84532 (base-sepolia), 1 (ethereum), 11155111 (ethereum-sepolia), 137 (polygon), 80002 (polygon-amoy)",
+            "name": "x-chain-id",
             "in": "header"
           }
         ],
@@ -3414,7 +3653,7 @@
           "Feeds"
         ],
         "summary": "Create private access link for entry",
-        "description": "Creates a time-limited presigned URL for accessing a private feed entry. Requires wallet signature authentication to verify the user is authorized.",
+        "description": "Creates a time-limited presigned URL for accessing a private feed entry. Requires wallet signature authentication. Access is granted if the user is the feed owner, if the entry is free, or if the user has purchased the entry.",
         "parameters": [
           {
             "schema": {
@@ -3538,6 +3777,35 @@
           },
           "401": {
             "description": "Unauthorized - wallet signature verification failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "details": {
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - user must have purchased the entry",
             "content": {
               "application/json": {
                 "schema": {
@@ -5021,11 +5289,11 @@
                           "rank": {
                             "type": "string"
                           },
-                          "feed_id": {
+                          "id": {
                             "type": "string",
                             "format": "uuid"
                           },
-                          "feed_name": {
+                          "name": {
                             "type": "string",
                             "minLength": 1,
                             "maxLength": 255
@@ -5093,12 +5361,12 @@
                           "unique_buyers": {
                             "type": "string"
                           },
-                          "feed_created_at": {
+                          "created_at": {
                             "type": "integer",
                             "minimum": 0,
                             "exclusiveMinimum": true
                           },
-                          "feed_updated_at": {
+                          "updated_at": {
                             "type": "integer",
                             "minimum": 0,
                             "exclusiveMinimum": true
@@ -5106,8 +5374,8 @@
                         },
                         "required": [
                           "rank",
-                          "feed_id",
-                          "feed_name",
+                          "id",
+                          "name",
                           "owner_id",
                           "owner_username",
                           "owner_wallet",
@@ -5121,8 +5389,8 @@
                           "total_purchases",
                           "total_revenue",
                           "unique_buyers",
-                          "feed_created_at",
-                          "feed_updated_at"
+                          "created_at",
+                          "updated_at"
                         ]
                       }
                     },
@@ -5695,11 +5963,11 @@
                           "rank": {
                             "type": "string"
                           },
-                          "feed_id": {
+                          "id": {
                             "type": "string",
                             "format": "uuid"
                           },
-                          "feed_name": {
+                          "name": {
                             "type": "string",
                             "minLength": 1,
                             "maxLength": 255
@@ -5785,8 +6053,8 @@
                         },
                         "required": [
                           "rank",
-                          "feed_id",
-                          "feed_name",
+                          "id",
+                          "name",
                           "owner_id",
                           "owner_username",
                           "owner_wallet",

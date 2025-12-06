@@ -76,13 +76,13 @@ export default function TopSellers() {
           TOP SELLERS
         </h1>
         <p className={styles.titleDescription}>
-          The highest earning content providers on Grapevine, ranked by total revenue.
+          The highest earning content providers on 5DTOK, ranked by total revenue.
         </p>
       </div>
 
       {/* Sellers Grid */}
       {data && data.data.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.data.map((seller) => (
             <div
               key={seller.user_id}
@@ -117,7 +117,7 @@ export default function TopSellers() {
                 </div>
 
                 {/* Stats Rows */}
-                <div className="space-y-2 mb-4">
+                <div className="mb-4 space-y-2">
                   <div className={styles.statsRow}>
                     <span className={styles.statsLabel}>Feeds:</span>
                     <span className={styles.statsValue}>{seller.total_feeds}</span>
@@ -148,10 +148,10 @@ export default function TopSellers() {
         </div>
       ) : (
         <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-12 text-center">
-          <div className="font-black text-2xl uppercase text-black mb-2 tracking-tight">
+          <div className="mb-2 text-2xl font-black tracking-tight text-black uppercase">
             NO SELLERS FOUND
           </div>
-          <p className="text-black font-bold">
+          <p className="font-bold text-black">
             No sellers found.
           </p>
         </div>

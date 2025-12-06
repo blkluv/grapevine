@@ -22,7 +22,7 @@ dotenv.config({ path: join(__dirname, '.env') });
 // CONFIGURATION
 // ============================================================================
 
-const SERVER = process.env.TEST_SERVER || 'https://api.grapevine.fyi';
+const SERVER = process.env.TEST_SERVER || 'https://api.5dtok.com';
 const CHAIN = process.env.TEST_CHAIN || 'base';
 const PRIVATE_KEY = process.env.BUYER_PRIVATE_KEY;
 const MAX_PAYMENT = BigInt(process.env.TEST_MAX_PAYMENT || '1000000'); // $1.00 USDC

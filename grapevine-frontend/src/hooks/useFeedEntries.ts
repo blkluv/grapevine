@@ -2,7 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { useGrapevine } from '@/context/GrapevineContext';
 import type { ListEntriesQuery, PaginatedResponse, Entry } from '@pinata/grapevine-sdk/dist/types';
 
-const GATEWAY_URL = 'https://gateway.grapevine.fyi/x402/cid';
+const GATEWAY_URL = 'https://gateway.5dtok.com/x402/cid';
 
 type EntryParams = {
   page_size?: number;

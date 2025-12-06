@@ -38,17 +38,17 @@ const SERVERS = {
   local: {
     name: 'Local Development Server',
     url: 'http://localhost:8080',
-    description: 'Local Grapevine API running on port 8080. Use for local testing and development.',
+    description: 'Local 5DTOK API running on port 8080. Use for local testing and development.',
   },
   dev: {
     name: 'Development Server',
-    url: 'https://api.grapevine.markets',
-    description: 'Grapevine development/staging server on testnet. Use for testing against the dev environment.',
+    url: 'https://markets.5dtok.com',
+    description: '5DTOK development/staging server on testnet. Use for testing against the dev environment.',
   },
   prod: {
     name: 'Production Server',
-    url: 'https://api.grapevine.fyi',
-    description: 'Grapevine production server. Use for real production operations.',
+    url: 'https://api.5dtok.com',
+    description: '5DTOK production server. Use for real production operations.',
   },
 };
 
@@ -66,7 +66,7 @@ function createBuyerAccount() {
 // Create MCP server
 const server = new Server(
   {
-    name: 'grapevine-mcp',
+    name: '5dtok',
     version: '1.0.0',
   },
   {
@@ -82,7 +82,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'list_servers',
-        description: 'List all available Grapevine servers (local, dev, prod)',
+        description: 'List all available 5DTOK servers (local, dev, prod)',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -114,7 +114,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'discover_resource',
-        description: 'Discover x402 protected resources on a Grapevine server (triggers 402 response to see payment requirements)',
+        description: 'Discover x402 protected resources on a 5DTOK server (triggers 402 response to see payment requirements)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -138,7 +138,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'call_api',
-        description: 'Make an authenticated API call to a Grapevine endpoint with x402 payment support',
+        description: 'Make an authenticated API call to a 5DTOK endpoint with x402 payment support',
         inputSchema: {
           type: 'object',
           properties: {
@@ -172,7 +172,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'get_feeds',
-        description: 'Get all feeds from Grapevine API with optional filtering',
+        description: 'Get all feeds from 5DTOK API with optional filtering',
         inputSchema: {
           type: 'object',
           properties: {
@@ -209,7 +209,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'create_feed',
-        description: 'Create a new feed on Grapevine API (requires x402 payment)',
+        description: 'Create a new feed on 5DTOK API (requires x402 payment)',
         inputSchema: {
           type: 'object',
           properties: {
@@ -246,13 +246,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'get_categories',
-        description: 'Get all categories from Grapevine API',
+        description: 'Get all categories from 5DTOK API',
         inputSchema: {
           type: 'object',
           properties: {
             server: {
               type: 'string',
-              description: 'Server: local (localhost:8080), dev (testnet-api.grapevine.fyi), or prod (api.grapevine.fyi)',
+              description: 'Server: local (localhost:8080), dev (testnet-api.5dtok.com), or prod (api.5dtok.com)',
               enum: ['local', 'dev', 'prod'],
             },
             chain: {

@@ -123,7 +123,7 @@ cp .env.example .env
 VITE_PRIVY_APP_ID=your_privy_app_id
 
 # Backend API
-VITE_GRAPEVINE_BACKEND_URL=https://api.grapevine.markets
+VITE_GRAPEVINE_BACKEND_URL=https://markets.5dtok.com
 
 # Farcaster mini app (optional)
 VITE_FARCASTER_MANIFEST_ID=your_manifest_id

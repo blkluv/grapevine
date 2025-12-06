@@ -1,7 +1,7 @@
 {
-  "name": "grapevine-mcp",
+  "name": "5dtok-mcp",
   "version": "1.0.0",
-  "description": "MCP server for interacting with Grapevine API using x402 payments",
+  "description": "MCP server for interacting with 5DTOK API using x402 payments",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,6 @@
     "viem": "^2.21.54",
     "dotenv": "^16.4.5"
   },
-  "author": "engineering@pinata.cloud",
+  "author": "hahz5d@pm.me",
   "license": "MIT"
 }

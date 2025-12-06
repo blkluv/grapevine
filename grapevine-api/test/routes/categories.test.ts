@@ -19,8 +19,8 @@ describe('Categories API', () => {
   describe('GET /v1/categories', () => {
     it('should retrieve cursor-paginated list of categories', async () => {
       // Create additional categories
-      await createTestCategory(testPool, { name: 'food' });
-      await createTestCategory(testPool, { name: 'money' });
+      await createTestCategory(testPool, { name: 'Category A' });
+      await createTestCategory(testPool, { name: 'Category B' });
 
       const response = await app.request('/v1/categories?page_size=20');
       expect(response.status).toBe(200);
@@ -43,8 +43,8 @@ describe('Categories API', () => {
 
     it('should filter categories by is_active status', async () => {
       // Create active and inactive categories
-      const activeCategory = await createTestCategory(testPool, { name: 'relationships' });
-      const inactiveCategory = await createTestCategory(testPool, { name: 'reviews' });
+      const activeCategory = await createTestCategory(testPool, { name: 'Active Category' });
+      const inactiveCategory = await createTestCategory(testPool, { name: 'Inactive Category' });
 
       // Update one to inactive
       await testPool.query(
@@ -68,24 +68,24 @@ describe('Categories API', () => {
     });
 
     it('should search categories by name', async () => {
-      await createTestCategory(testPool, { name: 'musik' });
-      await createTestCategory(testPool, { name: 'magic' });
-      await createTestCategory(testPool, { name: 'sex' });
+      await createTestCategory(testPool, { name: 'Crypto Trading' });
+      await createTestCategory(testPool, { name: 'Stock Trading' });
+      await createTestCategory(testPool, { name: 'Politics' });
 
-      const response = await app.request('/v1/categories?search=magic');
+      const response = await app.request('/v1/categories?search=trading');
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.data.length).toBe(1);
+      expect(data.data.length).toBe(2);
       data.data.forEach((cat: any) => {
-        expect(cat.name.toLowerCase()).toContain('magic');
+        expect(cat.name.toLowerCase()).toContain('trading');
       });
     });
 
     it('should order categories alphabetically by name', async () => {
-      await createTestCategory(testPool, { name: 'truth' });
-      await createTestCategory(testPool, { name: 'healxyz' });
-      await createTestCategory(testPool, { name: 'food' });
+      await createTestCategory(testPool, { name: 'Zebra Category' });
+      await createTestCategory(testPool, { name: 'Alpha Category' });
+      await createTestCategory(testPool, { name: 'Middle Category' });
 
       const response = await app.request('/v1/categories?page_size=100');
       expect(response.status).toBe(200);
@@ -119,18 +119,18 @@ describe('Categories API', () => {
 
     it('should retrieve category with all fields', async () => {
       const categoryWithIcon = await createTestCategory(testPool, {
-        name: 'reviews',
-        description: 'User reviews and ratings',
-        icon_url: 'https://example.com/reviews.png',
+        name: 'Category with Icon',
+        description: 'This category has an icon',
+        icon_url: 'https://example.com/icon.png',
       });
 
       const response = await app.request(`/v1/categories/${categoryWithIcon.id}`);
       expect(response.status).toBe(200);
 
       const category = await response.json();
-      expect(category.name).toBe('reviews');
-      expect(category.description).toBe('User reviews and ratings');
-      expect(category.icon_url).toBe('https://example.com/reviews.png');
+      expect(category.name).toBe('Category with Icon');
+      expect(category.description).toBe('This category has an icon');
+      expect(category.icon_url).toBe('https://example.com/icon.png');
       expectValidUUID(category.id);
     });
   });

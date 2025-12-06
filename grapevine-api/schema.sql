@@ -1,5 +1,5 @@
 -- PostgreSQL Schema for Decentralized Data Feeds Platform
--- Last Updated: 2025-12-06
+-- Last Updated: 2025-10-30
 --
 -- Features:
 -- - Multi-chain wallet authentication (Base, Ethereum, Polygon + testnets)
@@ -463,17 +463,15 @@ EXECUTE FUNCTION update_feed_transaction_stats();
 -- SAMPLE DATA (Optional - for testing)
 -- =============================================================================
 
--- Insert new categories
+-- Insert root categories
 INSERT INTO gv_categories (name, description) VALUES
-    ('food', 'Culinary experiences, recipes, and dining'),
-    ('healxyz', 'Health, wellness, and holistic healing practices'),
-    ('musik', 'Music genres, artists, and audio experiences'),
-    ('sex', 'Relationships, intimacy, and human sexuality'),
-    ('magic', 'Mysticism, spirituality, and esoteric practices'),
-    ('reviews', 'Critiques, evaluations, and ratings of various subjects'),
-    ('truth', 'Philosophical discussions, honesty, and authenticity'),
-    ('money', 'Finance, wealth, and economic discussions'),
-    ('relationships', 'Interpersonal connections and social dynamics');
+    ('Finance', 'Financial markets and economic indicators'),
+    ('Sports', 'Athletic competitions and sporting events'),
+    ('Business', 'Corporate earnings reports and financial results'),
+    ('Tech', 'Technology news and AI developments'),
+    ('Politics', 'Political events, elections, and policy'),
+    ('Crypto', 'Blockchain, crypto markets, and Web3'),
+    ('Games', 'Video games, esports, and gaming industry news');
 
 -- =============================================================================
 -- FUNCTIONS FOR COMMON OPERATIONS

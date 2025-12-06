@@ -10,11 +10,37 @@
   ],
   "rewrites": [
     {
-      "source": "/:path((?!assets/).*)",
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/:path((?!assets/|terms\.html|privacy\.html).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/terms.html",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/privacy.html",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

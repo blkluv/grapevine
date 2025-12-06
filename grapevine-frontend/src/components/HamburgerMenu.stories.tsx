@@ -4,15 +4,14 @@ import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 const mockCategories = [
-  { id: '1', name: 'food' },
-  { id: '2', name: 'healxyz' },
-  { id: '3', name: 'musik' },
-  { id: '4', name: 'sex' },
-  { id: '5', name: 'magic' },
-  { id: '6', name: 'reviews' },
-  { id: '7', name: 'truth' },
-  { id: '8', name: 'money' },
-  { id: '9', name: 'relationships' },
+  { id: '1', name: 'Technology' },
+  { id: '2', name: 'Sports' },
+  { id: '3', name: 'Entertainment' },
+  { id: '4', name: 'Politics' },
+  { id: '5', name: 'Science' },
+  { id: '6', name: 'Health' },
+  { id: '7', name: 'Business' },
+  { id: '8', name: 'Travel' },
 ];
 
 const MockWalletPill = () => {

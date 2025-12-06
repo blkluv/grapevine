@@ -125,7 +125,7 @@ export function NewsSidebar() {
     queryFn: async () => {
       const response = await fetch(GRAPEVINE_NEWS_PROD_API_URL)
       if (!response.ok) {
-        throw new Error(`Failed to fetch Grapevine news: ${response.statusText}`)
+        throw new Error(`Failed to fetch 5DTOK news: ${response.statusText}`)
       }
       const json = await response.json()
 
@@ -234,7 +234,7 @@ export function NewsSidebar() {
           className={styles.image}
         />
         {renderNewsSection('x402 News', x402Entries, isLoadingX402)}
-        {renderNewsSection('Grapevine News', grapevineEntries, isLoadingGrapevine)}
+        {renderNewsSection('5DTOK News', grapevineEntries, isLoadingGrapevine)}
       </div>
     </div>
   )

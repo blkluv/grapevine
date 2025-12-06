@@ -18,7 +18,11 @@
       "destination": "/privacy.html"
     },
     {
-      "source": "/:path((?!assets/|terms\.html|privacy\.html).*)",
+      "source": "/api/:path*",
+      "destination": "https://api.5dtok.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],

@@ -144,7 +144,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             server: {
               type: 'string',
-              description: 'Server: local (localhost:8080), dev (testnet-api.grapevine.fyi), prod (api.grapevine.fyi)',
+              description: 'Server: local (localhost:8080), dev (testnet-api.5dtok.com), prod (api.5dtok.com)',
               enum: ['local', 'dev', 'prod'],
             },
             path: {
@@ -178,7 +178,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             server: {
               type: 'string',
-              description: 'Server: local (localhost:8080), dev (testnet-api.grapevine.fyi), or prod (api.grapevine.fyi)',
+              description: 'Server: local (localhost:8080), dev (testnet-api.5dtok.com), or prod (api.5dtok.com)',
               enum: ['local', 'dev', 'prod'],
             },
             page_size: {
@@ -215,7 +215,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             server: {
               type: 'string',
-              description: 'Server: local (localhost:8080), dev (testnet-api.grapevine.fyi), or prod (api.grapevine.fyi)',
+              description: 'Server: local (localhost:8080), dev (testnet-api.5dtok.com), or prod (api.5dtok.com)',
               enum: ['local', 'dev', 'prod'],
             },
             name: {

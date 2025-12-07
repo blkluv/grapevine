@@ -11,7 +11,7 @@ function farcasterManifestPlugin(tunnelUrl: string): Plugin {
         if (req.url === '/.well-known/farcaster.json') {
           const manifest = {
             frame: {
-              name: 'Grapevine dev',
+              name: '5DTOK',
               homeUrl: tunnelUrl,
               iconUrl: `${tunnelUrl}/icon.png`,
               version: '1',

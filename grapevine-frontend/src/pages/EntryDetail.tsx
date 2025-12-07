@@ -529,11 +529,11 @@ export default function EntryDetail() {
 
   const handleShareToFarcaster = async () => {
     if (!entry) return
-    const baseUrl = import.meta.env.VITE_ENV === 'production' ? 'https://grapevine.fyi' : 'https://grapevine.markets'
+    const baseUrl = import.meta.env.VITE_ENV === 'production' ? 'https://5dtok.com' : 'https://markets.5dtok.com'
     const entryUrl = `${baseUrl}/feeds/${feedId}/entries/${entryId}`
     try {
       await sdk.actions.composeCast({
-        text: `Check out "${entry.title || 'this entry'}" on Grapevine`,
+        text: `Check out "${entry.title || 'this entry'}" on 5DTOK`,
         embeds: [entryUrl],
       })
     } catch (err) {
@@ -544,7 +544,7 @@ export default function EntryDetail() {
   return (
     <div>
       {/* Back Button and Entry Title */}
-      <div className="mb-6 flex items-center gap-4 flex-wrap">
+      <div className="flex flex-wrap items-center gap-4 mb-6">
         <Button
           onClick={() => navigate(feedId ? `/feeds/${feedId}/entries?from=${fromEncoded || encodeURIComponent('/')}` : '/')}
           variant={themeKey === 'modern' ? 'ghost' : 'secondary'}

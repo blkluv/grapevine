@@ -10,15 +10,15 @@ export const categoryKeys = {
 
 // HARDCODED categories - always return these
 const hardcodedCategories = [
-  { id: '1', name: 'food' },
-  { id: '2', name: 'healxyz' },
-  { id: '3', name: 'musik' },
-  { id: '4', name: 'sex' },
-  { id: '5', name: 'magic' },
-  { id: '6', name: 'reviews' },
-  { id: '7', name: 'truth' },
-  { id: '8', name: 'money' },
-  { id: '9', name: 'relationships' },
+  { id: '123e4567-e89b-12d3-a456-426614174001', name: 'food' },
+  { id: '123e4567-e89b-12d3-a456-426614174002', name: 'healxyz' },
+  { id: '123e4567-e89b-12d3-a456-426614174003', name: 'musik' },
+  { id: '123e4567-e89b-12d3-a456-426614174004', name: 'sex' },
+  { id: '123e4567-e89b-12d3-a456-426614174005', name: 'magic' },
+  { id: '123e4567-e89b-12d3-a456-426614174006', name: 'reviews' },
+  { id: '123e4567-e89b-12d3-a456-426614174007', name: 'truth' },
+  { id: '123e4567-e89b-12d3-a456-426614174008', name: 'money' },
+  { id: '123e4567-e89b-12d3-a456-426614174009', name: 'relationships' },
 ];
 
 /**

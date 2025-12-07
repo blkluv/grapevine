@@ -189,7 +189,7 @@ export default function FeedEntries() {
 
   const handleShareToFarcaster = async () => {
     if (!feed) return
-    const baseUrl = import.meta.env.VITE_ENV === 'production' ? 'https://grapevine.fyi' : 'https://grapevine.markets'
+    const baseUrl = import.meta.env.VITE_ENV === 'production' ? 'https://5dtok.com' : 'https://5dtok.com'
     const feedUrl = `${baseUrl}/feeds/${feedId}/entries`
     try {
       await sdk.actions.composeCast({

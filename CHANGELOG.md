@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.10](https://github.com/PinataCloud/grapevine-private/compare/v0.1.9...v0.1.10) (2025-12-05)
+
+
+### Features
+
+* refactor home page and layout ([1f3972f](https://github.com/PinataCloud/grapevine-private/commit/1f3972fcd7a1761099f44e0ce2a35ed7d5d9ed1f))
+* remove payment middlewear ([66cb944](https://github.com/PinataCloud/grapevine-private/commit/66cb94491c9c2555eca1ba9ea10db4934d1cab71))
+* specific analytic events ([283d24c](https://github.com/PinataCloud/grapevine-private/commit/283d24c1a55c98eb9f461a5626e79e480ab18de8))
+* vercel analytics ([a39364f](https://github.com/PinataCloud/grapevine-private/commit/a39364f0f00adec2c4ae1f2c949d8ad6704b2411))
+
+
+### Bug Fixes
+
+* decrement feed entries count if entry is deleted ([724384c](https://github.com/PinataCloud/grapevine-private/commit/724384c92283b1a89e575921dd37fb4a64f30306))
+* decrement feed entries count if entry is deleted ([0ec0aba](https://github.com/PinataCloud/grapevine-private/commit/0ec0aba66b9bcb5480102cd34a2f8f3f56fdbf11))
+* music player volume, about page, feed card size ([95f6586](https://github.com/PinataCloud/grapevine-private/commit/95f65868bd5c0f19cbedbc07c76d53215613e5ee))
+* music player volume, about page, feed card size ([d4459bb](https://github.com/PinataCloud/grapevine-private/commit/d4459bb8d7a3a9e6439246d8934aed1e7037d568))
+* music player volume, about page, feed card size ([511b3a9](https://github.com/PinataCloud/grapevine-private/commit/511b3a9758fe959c4792e9f2efaec07fc95e6df5))
+* remove payment middlewear ([d3581ed](https://github.com/PinataCloud/grapevine-private/commit/d3581ed2f9f8ec58ad699c9160bf9ade598054ed))
+* separate farcaster from privy, integrate fixed sdk ([e95ad44](https://github.com/PinataCloud/grapevine-private/commit/e95ad443d9350f56370e1debb99b3a8b0e7f3328))
+* updates tests ([979b5cc](https://github.com/PinataCloud/grapevine-private/commit/979b5cc310212b2300bdae3d86689fec1eaa0029))
+
 ## [0.1.9](https://github.com/PinataCloud/grapevine/compare/v0.1.8...v0.1.9) (2025-11-26)
 
 

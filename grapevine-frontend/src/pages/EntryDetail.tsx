@@ -258,12 +258,22 @@ export default function EntryDetail() {
       setPurchasing(true)
       setPurchaseError(null)
 
-      // For HTML content, always get signed URL and open in new window
+      // For HTML content, open in new window
       if (isHtmlMimeType(entry.mime_type)) {
-        // Case: Need to purchase first (paid content, not owner, not purchased yet)
-        if (!entry.is_free && !hasAccess) {
-          // First, make the payment via x402 to register the purchase
-          const gatewayUrl = `https://${import.meta.env.VITE_PINATA_GATEWAY}/x402/cid/${entry.cid}`
+        const gatewayUrl = `https://${import.meta.env.VITE_PINATA_GATEWAY}/x402/cid/${entry.cid}`
+
+        // Free content: open gateway URL directly, no auth needed
+        if (entry.is_free) {
+          if (isInMiniApp) {
+            await sdk.actions.openUrl(gatewayUrl)
+          } else {
+            window.open(gatewayUrl, '_blank')
+          }
+          return
+        }
+
+        // Paid content: need to purchase first if no access
+        if (!hasAccess) {
           const maxPaymentAmount = BigInt(1_000_000)
           const response = await fetchWithPayment(gatewayUrl, {}, maxPaymentAmount)
 
@@ -284,7 +294,7 @@ export default function EntryDetail() {
           // Payment successful, purchase is now registered
         }
 
-        // Now get the signed URL (works for free, owner, purchased, and just-purchased)
+        // Paid content with access: get signed URL
         if (!isConnected) {
           throw new Error('Please connect your wallet to view this content')
         }
@@ -303,18 +313,20 @@ export default function EntryDetail() {
         }
 
         const accessLinkResponse = await grapevineApiClient.getEntryAccessLink(feedId, entryId, authHeaders)
-        window.open(accessLinkResponse.url, '_blank')
+        if (isInMiniApp) {
+          await sdk.actions.openUrl(accessLinkResponse.url)
+        } else {
+          window.open(accessLinkResponse.url, '_blank')
+        }
 
-        // Track analytics for HTML content based on access type
-        if (!entry.is_free) {
-          if (isOwner) {
-            trackEvent(AnalyticsEvents.VIEW_OWN_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
-          } else if (hasPurchased) {
-            trackEvent(AnalyticsEvents.VIEW_PURCHASED_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
-          } else {
-            // New purchase was just made (in the x402 flow above)
-            trackEvent(AnalyticsEvents.BUY_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
-          }
+        // Track analytics for paid HTML content
+        if (isOwner) {
+          trackEvent(AnalyticsEvents.VIEW_OWN_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+        } else if (hasPurchased) {
+          trackEvent(AnalyticsEvents.VIEW_PURCHASED_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
+        } else {
+          // New purchase was just made (in the x402 flow above)
+          trackEvent(AnalyticsEvents.BUY_RESOURCE, { entryId: entryId || '', feedId: feedId || '' }, address)
         }
         return
       }

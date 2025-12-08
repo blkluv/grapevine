@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd grapevine-frontend && pnpm run build",
+  "installCommand": "pnpm install",
+  "devCommand": "cd grapevine-frontend && pnpm run dev",
+  "outputDirectory": "grapevine-frontend/dist",
+  "framework": "vite",
+  "regions": ["iad1"],
+  "nodeVersion": "22.x"
+}

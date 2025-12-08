@@ -1,6 +1,5 @@
 packages:
   - 'grapevine-api'
-  - 'grapevine-frontend'
   - 'grapevine-client'
+  - 'grapevine-frontend'
   - 'grapevine-mcp'
-

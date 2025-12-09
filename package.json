@@ -3,7 +3,7 @@
   "version": "0.1.9",
   "private": true,
   "description": "Decentralized Data Feeds Platform",
-  "packageManager": "pnpm@10.22.0",
+  "packageManager": "pnpm@10.25.0",
   "workspaces": [
     "grapevine-api",
     "grapevine-client",

@@ -276,8 +276,8 @@ export function UploadEntryModalView({
             </div>
           )}
 
-          {/* Expiration Date/Time (only shown if not free) */}
-          {!isFree && (
+          {/* Expiration Date/Time (only shown if not free and in dev mode) */}
+          {!isFree && import.meta.env.VITE_ENV === 'develop' && (
             <div>
               <label className={styles.checkboxLabel}>
                 <input

@@ -11,6 +11,9 @@ export const Default: Story = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [isFree, setIsFree] = useState(false);
   const [priceUsd, setPriceUsd] = useState('');
+  const [hasExpiration, setHasExpiration] = useState(false);
+  const [expirationDate, setExpirationDate] = useState('');
+  const [expirationTime, setExpirationTime] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -105,6 +108,12 @@ export const Default: Story = () => {
         onIsFreeChange={setIsFree}
         priceUsd={priceUsd}
         onPriceUsdChange={setPriceUsd}
+        hasExpiration={hasExpiration}
+        onHasExpirationChange={setHasExpiration}
+        expirationDate={expirationDate}
+        onExpirationDateChange={setExpirationDate}
+        expirationTime={expirationTime}
+        onExpirationTimeChange={setExpirationTime}
         error={null}
         isUploading={false}
         dragActive={dragActive}

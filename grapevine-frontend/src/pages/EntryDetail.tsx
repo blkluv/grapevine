@@ -8,6 +8,7 @@ import { useHasPurchasedEntry } from '@/hooks/useTransactions'
 import { useDeleteEntry } from '@/hooks/useDeleteEntry'
 import { grapevineApiClient, type GrapevineEntry } from '@/services/grapevineApi'
 import { Button, ArrowWrapper, Loader } from '@/components/ui'
+import { DeleteEntryDialog } from '@/components/DeleteEntryDialog'
 import { cn } from '@/lib/utils'
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics'
 import sdk from '@farcaster/miniapp-sdk'
@@ -156,9 +157,13 @@ export default function EntryDetail() {
   const [purchaseError, setPurchaseError] = useState<string | null>(null)
   const [purchasedContent, setPurchasedContent] = useState<{ blob: Blob; mimeType: string } | null>(null)
   const [contentUrl, setContentUrl] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   // Ref for the purchase box for testing
   const purchaseBoxRef = useRef<HTMLDivElement>(null)
+
+  // Countdown timer state for expires_at
+  const [countdown, setCountdown] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null)
 
   // Check if the user has already purchased this entry
   const { data: hasPurchased, isLoading: isCheckingPurchase } = useHasPurchasedEntry(entryId)
@@ -195,6 +200,48 @@ export default function EntryDetail() {
   // Get theme-specific styles
   const themeKey = ['modern', 'neobrutalism'].includes(currentTheme) ? currentTheme : 'default'
   const styles = themeStyles[themeKey as keyof typeof themeStyles]
+
+  // Countdown timer effect for expires_at
+  useEffect(() => {
+    if (!entry?.expires_at) {
+      setCountdown(null)
+      return
+    }
+
+    const expiresAtMs = entry.expires_at * 1000
+    const now = Date.now()
+
+    // If already expired, no countdown needed
+    if (expiresAtMs <= now) {
+      setCountdown(null)
+      return
+    }
+
+    const updateCountdown = () => {
+      const now = Date.now()
+      const diff = expiresAtMs - now
+
+      if (diff <= 0) {
+        setCountdown(null)
+        return
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+      setCountdown({ days, hours, minutes, seconds })
+    }
+
+    // Update immediately
+    updateCountdown()
+
+    // Then update every second
+    const interval = setInterval(updateCountdown, 1000)
+
+    return () => clearInterval(interval)
+  }, [entry?.expires_at])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -721,17 +768,7 @@ export default function EntryDetail() {
                   )}
                   {isOwner && feedId && entryId && (
                     <Button
-                      onClick={async () => {
-                        if (window.confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
-                          try {
-                            await deleteEntry.mutateAsync({ feedId, entryId })
-                            toast.success('Entry deleted successfully')
-                            navigate(`/feeds/${feedId}/entries`)
-                          } catch (err) {
-                            toast.error(err instanceof Error ? err.message : 'Failed to delete entry')
-                          }
-                        }
-                      }}
+                      onClick={() => setShowDeleteDialog(true)}
                       variant="danger"
                       size="sm"
                       loading={deleteEntry.isPending}
@@ -798,6 +835,36 @@ export default function EntryDetail() {
               </div>
             </div>
 
+            {/* Countdown Timer for Expiration */}
+            {countdown && entry.expires_at && (
+              <div className="mt-6 p-4 border-[2px] border-black bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <h3 className={styles.infoLabel}>
+                  Becomes Free In
+                </h3>
+                <div className="flex gap-4 mt-2">
+                  <div className="text-center">
+                    <p className="text-2xl font-black font-mono">{countdown.days}</p>
+                    <p className="text-xs font-mono uppercase">Days</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-black font-mono">{countdown.hours.toString().padStart(2, '0')}</p>
+                    <p className="text-xs font-mono uppercase">Hours</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-black font-mono">{countdown.minutes.toString().padStart(2, '0')}</p>
+                    <p className="text-xs font-mono uppercase">Min</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-black font-mono">{countdown.seconds.toString().padStart(2, '0')}</p>
+                    <p className="text-xs font-mono uppercase">Sec</p>
+                  </div>
+                </div>
+                <p className="mt-3 text-sm font-mono text-black/70">
+                  On {new Date(entry.expires_at * 1000).toLocaleString()}
+                </p>
+              </div>
+            )}
+
             {entry.tags && entry.tags.length > 0 && (
               <div className={styles.tagsSection}>
                 <h3 className={styles.infoLabel}>
@@ -814,6 +881,26 @@ export default function EntryDetail() {
             )}
           </div>
         </>
+      )}
+
+      {/* Delete Entry Dialog */}
+      {entry && feedId && entryId && (
+        <DeleteEntryDialog
+          isOpen={showDeleteDialog}
+          entryName={entry.title || 'Untitled Entry'}
+          onClose={() => setShowDeleteDialog(false)}
+          onConfirm={async () => {
+            try {
+              await deleteEntry.mutateAsync({ feedId, entryId })
+              toast.success('Entry deleted successfully')
+              setShowDeleteDialog(false)
+              navigate(`/feeds/${feedId}/entries`)
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : 'Failed to delete entry')
+            }
+          }}
+          isDeleting={deleteEntry.isPending}
+        />
       )}
 
     </div>

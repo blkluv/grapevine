@@ -26,6 +26,9 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
   const [tags, setTags] = useState<string[]>([]);
   const [isFree, setIsFree] = useState(false);
   const [priceUsd, setPriceUsd] = useState('');
+  const [hasExpiration, setHasExpiration] = useState(false);
+  const [expirationDate, setExpirationDate] = useState('');
+  const [expirationTime, setExpirationTime] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -35,6 +38,14 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
     const usdFloat = parseFloat(usd);
     if (isNaN(usdFloat) || usdFloat < 0) return '0';
     return Math.floor(usdFloat * 1_000_000).toString();
+  };
+
+  // Convert local date/time to Unix epoch (seconds)
+  const getExpirationEpoch = (): number | undefined => {
+    if (!hasExpiration || !expirationDate || !expirationTime) return undefined;
+    const localDateTime = new Date(`${expirationDate}T${expirationTime}`);
+    if (isNaN(localDateTime.getTime())) return undefined;
+    return Math.floor(localDateTime.getTime() / 1000);
   };
 
   // Reset form when dialog opens
@@ -48,6 +59,9 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
       setTags([]);
       setIsFree(false);
       setPriceUsd('');
+      setHasExpiration(false);
+      setExpirationDate('');
+      setExpirationTime('');
       setError(null);
       setIsUploading(false);
     }
@@ -159,6 +173,7 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
           amount: usdToGwei(priceUsd),
           currency: 'USDC',
         } : undefined,
+        expires_at: getExpirationEpoch(),
       };
 
       console.log('[UploadEntryModal] 📦 Upload data prepared:', {
@@ -234,6 +249,17 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
       onIsFreeChange={setIsFree}
       priceUsd={priceUsd}
       onPriceUsdChange={setPriceUsd}
+      hasExpiration={hasExpiration}
+      onHasExpirationChange={(value) => {
+        setHasExpiration(value);
+        if (value) {
+          setIsFree(false);
+        }
+      }}
+      expirationDate={expirationDate}
+      onExpirationDateChange={setExpirationDate}
+      expirationTime={expirationTime}
+      onExpirationTimeChange={setExpirationTime}
       error={error}
       isUploading={isUploading}
       dragActive={dragActive}

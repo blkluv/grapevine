@@ -42,6 +42,12 @@ interface UploadEntryModalViewProps {
   onIsFreeChange: (value: boolean) => void;
   priceUsd: string;
   onPriceUsdChange: (value: string) => void;
+  hasExpiration: boolean;
+  onHasExpirationChange: (value: boolean) => void;
+  expirationDate: string;
+  onExpirationDateChange: (value: string) => void;
+  expirationTime: string;
+  onExpirationTimeChange: (value: string) => void;
   error: string | null;
   isUploading: boolean;
   dragActive: boolean;
@@ -71,6 +77,12 @@ export function UploadEntryModalView({
   onIsFreeChange,
   priceUsd,
   onPriceUsdChange,
+  hasExpiration,
+  onHasExpirationChange,
+  expirationDate,
+  onExpirationDateChange,
+  expirationTime,
+  onExpirationTimeChange,
   error,
   isUploading,
   dragActive,
@@ -221,18 +233,20 @@ export function UploadEntryModalView({
             )}
           </div>
 
-          {/* Is Free Checkbox */}
-          <div>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={isFree}
-                onChange={(e) => onIsFreeChange(e.target.checked)}
-                className={styles.checkbox}
-              />
-              <span className={styles.checkboxText}>Make this entry free</span>
-            </label>
-          </div>
+          {/* Is Free Checkbox (hidden when expiration is set) */}
+          {!hasExpiration && (
+            <div>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={isFree}
+                  onChange={(e) => onIsFreeChange(e.target.checked)}
+                  className={styles.checkbox}
+                />
+                <span className={styles.checkboxText}>Make this entry free</span>
+              </label>
+            </div>
+          )}
 
           {/* Price Input (only shown if not free) */}
           {!isFree && (
@@ -258,6 +272,58 @@ export function UploadEntryModalView({
                 <p className={styles.priceInfo}>
                   = {usdToGwei(priceUsd)} gwei (USDC)
                 </p>
+              )}
+            </div>
+          )}
+
+          {/* Expiration Date/Time (only shown if not free) */}
+          {!isFree && (
+            <div>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={hasExpiration}
+                  onChange={(e) => onHasExpirationChange(e.target.checked)}
+                  className={styles.checkbox}
+                />
+                <span className={styles.checkboxText}>Set expiration (becomes free after)</span>
+              </label>
+
+              {hasExpiration && (
+                <div className="mt-3 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor="expiration-date" className={styles.label}>
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        id="expiration-date"
+                        value={expirationDate}
+                        onChange={(e) => onExpirationDateChange(e.target.value)}
+                        className={styles.input}
+                        min={new Date().toISOString().split('T')[0]}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="expiration-time" className={styles.label}>
+                        Time
+                      </label>
+                      <input
+                        type="time"
+                        id="expiration-time"
+                        value={expirationTime}
+                        onChange={(e) => onExpirationTimeChange(e.target.value)}
+                        className={styles.input}
+                      />
+                    </div>
+                  </div>
+                  {expirationDate && expirationTime && (
+                    <p className={styles.priceInfo}>
+                      Entry will become free on {new Date(`${expirationDate}T${expirationTime}`).toLocaleString()}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           )}

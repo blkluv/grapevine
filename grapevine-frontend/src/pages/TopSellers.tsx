@@ -26,10 +26,10 @@ const styles = {
     active:translate-y-[4px]
     active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
   `,
-  rankBadgeContainer: 'bg-[#00f0ff] border-b-4 border-black p-4',
+  rankBadgeContainer: 'bg-accent-aqua border-b-4 border-black p-4',
   rankBadge: 'bg-black border-4 border-black px-4 py-2 inline-block',
   rankText: 'font-black text-2xl text-white',
-  revenueBadge: 'bg-[#ff6b35] border-4 border-black px-4 py-2 inline-block',
+  revenueBadge: 'bg-accent-orange border-4 border-black px-4 py-2 inline-block',
   revenueText: 'text-sm font-black text-white uppercase',
   userInfoContainer: 'p-6',
   userName: 'font-black text-xl text-black mb-2 truncate uppercase',

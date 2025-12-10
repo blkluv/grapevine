@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui'
 
+const LOGO_URL = 'https://grapevine-assets.mypinata.cloud/ipfs/bafkreib4zfs5lxdvlqzxyvc2djb4oaw2rvizg5rzwivjlet53j6fd6mvsy'
+
 // Neobrutalism styles
 const styles = {
   wrapper: 'flex flex-col lg:flex-row items-center lg:items-start lg:justify-between gap-6 bg-white border-b-4 border-black pb-6 mb-8',
-  logoClass: 'font-mono font-black text-3xl lg:text-4xl uppercase tracking-tighter text-black',
   navContainer: 'flex flex-wrap items-center justify-center gap-3 lg:gap-4 bg-white p-3',
   buttonClass: 'min-w-[80px] lg:min-w-[150px] text-xs lg:text-sm px-3 lg:px-4',
 }
@@ -29,9 +30,11 @@ export function Navigation() {
   return (
     <div className={styles.wrapper}>
       <Link to="/" className="no-underline">
-        <h1 className={styles.logoClass}>
-          GRAPEVINE
-        </h1>
+        <img
+          src={LOGO_URL}
+          alt="Grapevine"
+          className="h-10 lg:h-16"
+        />
       </Link>
 
       <div className={styles.navContainer}>

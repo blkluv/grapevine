@@ -18,10 +18,10 @@ const styles = {
   uploadArea: 'block w-full border-4 border-dashed border-black bg-white p-3 sm:p-6 text-center cursor-pointer hover:bg-gray-100 transition-colors',
   uploadText: 'font-mono font-black uppercase text-xs',
   uploadSubtext: 'font-mono text-[10px] text-black/60',
-  imagePreview: 'relative border-4 border-black p-1 bg-[#ff6b35]',
-  tag: 'inline-flex items-center gap-1 bg-[#00f0ff] border-4 border-black px-2 py-0.5 font-mono text-xs font-black uppercase',
+  imagePreview: 'relative border-4 border-black p-1 bg-accent-orange',
+  tag: 'inline-flex items-center gap-1 bg-accent-aqua border-4 border-black px-2 py-0.5 font-mono text-xs font-black uppercase',
   tagRemove: 'text-black hover:bg-black hover:text-white font-black text-sm leading-none transition-colors px-1',
-  loading: 'bg-[#00f0ff] border-4 border-black p-3 flex justify-center items-center',
+  loading: 'bg-accent-aqua border-4 border-black p-3 flex justify-center items-center',
   loadingText: 'font-mono font-black uppercase text-xs text-center text-black',
   footer: 'flex gap-2 sm:gap-4 p-2 sm:p-4 border-t-4 border-black bg-white',
 };

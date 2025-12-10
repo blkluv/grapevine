@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
 import { CreateFeedDialog } from '@/components/CreateFeedDialog'
 import { FeedCard } from '@/components/FeedCard'
@@ -22,6 +22,7 @@ type FeedFilters = {
 export default function Feeds() {
   const { isConnected, address, connect } = useWallet()
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const { setTitle } = usePageTitle()
 
@@ -206,10 +207,10 @@ export default function Feeds() {
             >
               Popular
             </Button>
-            {isConnected && (
+            {isConnected && address && (
               <Button
-                onClick={() => updateFilters({ view: 'my' })}
-                variant={showMyFeeds ? 'primary' : 'secondary'}
+                onClick={() => navigate(`/user/${address}`)}
+                variant="secondary"
                 size="lg"
                 className="ml-auto"
               >

@@ -12,7 +12,7 @@ export default function About() {
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Hero Header */}
       <div className="flex flex-col items-center gap-4">
-        <div className="px-8 py-4 bg-[#00f0ff] border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="px-8 py-4 bg-accent-aqua border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <h1 className="text-2xl md:text-4xl font-mono font-black uppercase tracking-tight text-center">
             Grapevine
           </h1>
@@ -20,7 +20,7 @@ export default function About() {
             Create Liquid Information
           </p>
         </div>
-        <div className="px-6 py-3 bg-[#ff6b35] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="px-6 py-3 bg-accent-orange border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <p className="text-base md:text-lg font-mono font-bold text-center">
             Publish, discover, and buy high-signal data consumed by humans or AI.
           </p>
@@ -52,7 +52,7 @@ export default function About() {
 
       {/* Feeds */}
       <div className="bg-white border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <div className="inline-block px-4 py-2 bg-[#ff6b35] border-2 border-black mb-4">
+        <div className="inline-block px-4 py-2 bg-accent-orange border-2 border-black mb-4">
           <h3 className="font-mono font-black uppercase text-lg">Feeds</h3>
         </div>
         <p className="font-mono text-base leading-relaxed">
@@ -62,7 +62,7 @@ export default function About() {
 
       {/* Entries */}
       <div className="bg-white border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <div className="inline-block px-4 py-2 bg-[#ff6b35] border-2 border-black mb-4">
+        <div className="inline-block px-4 py-2 bg-accent-orange border-2 border-black mb-4">
           <h3 className="font-mono font-black uppercase text-lg">Entries</h3>
         </div>
         <p className="font-mono text-base leading-relaxed">
@@ -72,7 +72,7 @@ export default function About() {
 
       {/* Payments */}
       <div className="bg-white border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <div className="inline-block px-4 py-2 bg-[#ff6b35] border-2 border-black mb-4">
+        <div className="inline-block px-4 py-2 bg-accent-orange border-2 border-black mb-4">
           <h3 className="font-mono font-black uppercase text-lg">Payments</h3>
         </div>
         <p className="font-mono text-base leading-relaxed">
@@ -81,7 +81,7 @@ export default function About() {
       </div>
 
       {/* Use Cases Header */}
-      <div className="bg-[#00f0ff] border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-accent-aqua border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
         <h2 className="text-xl md:text-2xl font-mono font-black uppercase text-center">
           What Grapevine Can Be Used For
         </h2>
@@ -130,7 +130,7 @@ export default function About() {
       </div>
 
       {/* Data Should Be Easy To Buy */}
-      <div className="bg-[#ff6b35] border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-accent-orange border-4 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <h2 className="text-xl font-mono font-black uppercase mb-4 text-center">
           Data Should Be Easy To Buy
         </h2>
@@ -145,7 +145,7 @@ export default function About() {
       </div>
 
       {/* What's Next */}
-      <div className="bg-[#00f0ff] border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-accent-aqua border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
         <h2 className="text-xl md:text-2xl font-mono font-black uppercase text-center">
           What's Next
         </h2>
@@ -179,7 +179,7 @@ export default function About() {
         <p className="font-mono text-base leading-relaxed font-bold mb-4">
           We built Grapevine because we believe in turning human knowledge into usable, accessible, liquid information.
         </p>
-        <p className="font-mono text-xl font-black uppercase bg-[#00f0ff] border-2 border-black p-4 inline-block">
+        <p className="font-mono text-xl font-black uppercase bg-accent-aqua border-2 border-black p-4 inline-block">
           Create liquid information. Let the world consume it.
         </p>
       </div>

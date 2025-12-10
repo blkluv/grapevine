@@ -81,7 +81,7 @@ export function FeedCard({
 
   // Construct image URL from image_cid
   const imageUrl = feed.image_cid
-    ? `https://${PINATA_GATEWAY}/files/${feed.image_cid}?img-height=600`
+    ? `https://${PINATA_GATEWAY}/ipfs/${feed.image_cid}?img-height=600`
     : getRandomRobotImage(feed.id)
 
   const handleCardClick = () => {
@@ -192,7 +192,7 @@ export function FeedCard({
 
         {/* Revenue */}
         {feed.total_revenue !== undefined && (
-          <div className="bg-[#00f0ff] text-black px-2 py-1 text-xs font-black uppercase border-2 border-black mb-1 inline-block">
+          <div className="bg-accent-aqua text-black px-2 py-1 text-xs font-black uppercase border-2 border-black mb-1 inline-block">
             REVENUE: ${(Number(feed.total_revenue) / 1000000).toFixed(2)}
           </div>
         )}

@@ -19,7 +19,7 @@ import { useFarcaster } from '@/context/FarcasterContext'
 
 // Neobrutalism styles
 const styles = {
-  feedNameLabel: 'px-6 py-3 bg-[#00f0ff] border-[2px] border-black font-mono font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+  feedNameLabel: 'px-6 py-3 bg-accent-aqua border-[2px] border-black font-mono font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
   loadingContainer: 'bg-white border-[2px] border-black p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center',
   loadingText: 'mt-4 text-xl font-black uppercase font-mono',
   errorContainer: 'bg-red-100 border-[2px] border-red-600 p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-6',

@@ -34,7 +34,7 @@ export function OriginalDialog({
         <div className="relative bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden">
             {/* Title Bar */}
-            <div className="border-b-4 border-black px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center flex-shrink-0 bg-[#00f0ff]">
+            <div className="border-b-4 border-black px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center flex-shrink-0 bg-accent-aqua">
               <h2 className="font-mono text-sm sm:text-base font-black uppercase text-black tracking-tight">
                 {title}
               </h2>

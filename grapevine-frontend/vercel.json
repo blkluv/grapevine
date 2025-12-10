@@ -10,6 +10,18 @@
   ],
   "rewrites": [
     {
+      "source": "/feeds/:feedId/entries/:entryId",
+      "destination": "/api/og?path=/feeds/:feedId/entries/:entryId"
+    },
+    {
+      "source": "/feeds/:feedId/entries",
+      "destination": "/api/og?path=/feeds/:feedId/entries"
+    },
+    {
+      "source": "/feeds/:feedId",
+      "destination": "/api/og?path=/feeds/:feedId"
+    },
+    {
       "source": "/:path((?!assets/).*)",
       "destination": "/index.html"
     }

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
+import { useWallet } from '@/context/WalletContext'
+import { useFarcaster } from '@/context/FarcasterContext'
 import { useWalletByAddress /*, useWalletStats */ } from '@/hooks/useWalletByAddress'
 import { useUserFeeds } from '@/hooks/useUserFeeds'
 import { FeedCard } from '@/components/FeedCard'
 import { Button, Pagination, Loader } from '@/components/ui'
 import { formatWalletAddress } from '@/lib/utils'
+import sdk from '@farcaster/miniapp-sdk'
 
 const themeStyles = {
   default: {
@@ -48,6 +51,13 @@ export default function UserProfile() {
   const [searchParams] = useSearchParams()
   const { setTitle } = usePageTitle()
   const [currentTheme, setCurrentTheme] = useState('default')
+
+  // Get current user info
+  const { address: currentUserAddress } = useWallet()
+  const { isInMiniApp, user: farcasterUser } = useFarcaster()
+
+  // Check if viewing own profile
+  const isOwnProfile = currentUserAddress?.toLowerCase() === walletAddress?.toLowerCase()
 
   // Pagination state
   const [pageTokens, setPageTokens] = useState<string[]>([])
@@ -167,7 +177,38 @@ export default function UserProfile() {
       {/* User Info Header */}
       <div className={styles.userInfoCard}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
+          {/* Farcaster Avatar (only in mini app and viewing own profile) */}
+          {isInMiniApp && isOwnProfile && farcasterUser?.pfpUrl && (
+            <div className="flex-shrink-0">
+              <img
+                src={farcasterUser.pfpUrl}
+                alt={farcasterUser.username || 'Profile'}
+                className="w-20 h-20 border-4 border-black"
+              />
+            </div>
+          )}
+
           <div className="flex-1 min-w-0">
+            {/* This is you badge */}
+            {isOwnProfile && (
+              <div className="inline-block bg-green-200 text-green-800 px-3 py-1 border-2 border-black font-mono text-xs font-bold uppercase mb-3">
+                This is you
+              </div>
+            )}
+
+            {/* Farcaster Username (in mini app viewing own profile) */}
+            {isInMiniApp && isOwnProfile && farcasterUser?.username && (
+              <div className="mb-2">
+                <button
+                  onClick={() => sdk.actions.openUrl(`https://warpcast.com/${farcasterUser.username}`)}
+                  className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-mono font-bold cursor-pointer"
+                >
+                  <span>@{farcasterUser.username}</span>
+                  <span className="text-xs">↗</span>
+                </button>
+              </div>
+            )}
+
             {/* Username or Wallet Address */}
             <h1 className={styles.userName}>
               {walletData.username || formatWalletAddress(walletData.wallet_address)}
@@ -182,8 +223,10 @@ export default function UserProfile() {
             </div>
 
             {/* Network Badge */}
-            <div className={styles.networkBadge}>
-              {walletData.wallet_address_network.toUpperCase()}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className={styles.networkBadge}>
+                {walletData.wallet_address_network.toUpperCase()}
+              </div>
             </div>
           </div>
         </div>
@@ -193,7 +236,7 @@ export default function UserProfile() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className={styles.sectionTitle}>
-            FEEDS BY THIS USER
+            {isOwnProfile ? 'YOUR FEEDS' : 'FEEDS BY THIS USER'}
           </h2>
         </div>
 
@@ -232,7 +275,7 @@ export default function UserProfile() {
               NO FEEDS FOUND
             </div>
             <p className={styles.emptyStateText}>
-              This user hasn't created any feeds yet.
+              {isOwnProfile ? "You haven't created any feeds yet." : "This user hasn't created any feeds yet."}
             </p>
           </div>
         )}

@@ -1,14 +1,23 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import sdk from '@farcaster/miniapp-sdk'
 
+interface FarcasterUser {
+  fid: number
+  username?: string
+  displayName?: string
+  pfpUrl?: string
+}
+
 interface FarcasterContextType {
   isInMiniApp: boolean
   isSDKReady: boolean
+  user: FarcasterUser | null
 }
 
 const FarcasterContext = createContext<FarcasterContextType>({
   isInMiniApp: false,
   isSDKReady: false,
+  user: null,
 })
 
 export function useFarcaster() {
@@ -18,6 +27,7 @@ export function useFarcaster() {
 export function FarcasterProvider({ children }: { children: ReactNode }) {
   const [isSDKReady, setIsSDKReady] = useState(false)
   const [isInMiniApp, setIsInMiniApp] = useState(false)
+  const [user, setUser] = useState<FarcasterUser | null>(null)
 
   useEffect(() => {
     const initSDK = async () => {
@@ -29,6 +39,18 @@ export function FarcasterProvider({ children }: { children: ReactNode }) {
         if (inMiniApp) {
           await sdk.actions.ready()
           console.log('[FarcasterContext] SDK ready - in mini app')
+
+          // Get user context
+          const context = await sdk.context
+          if (context?.user) {
+            setUser({
+              fid: context.user.fid,
+              username: context.user.username,
+              displayName: context.user.displayName,
+              pfpUrl: context.user.pfpUrl,
+            })
+            console.log('[FarcasterContext] User:', context.user.username)
+          }
         }
 
         setIsInMiniApp(inMiniApp)
@@ -46,7 +68,7 @@ export function FarcasterProvider({ children }: { children: ReactNode }) {
   }, [isSDKReady])
 
   return (
-    <FarcasterContext.Provider value={{ isInMiniApp, isSDKReady }}>
+    <FarcasterContext.Provider value={{ isInMiniApp, isSDKReady, user }}>
       {children}
     </FarcasterContext.Provider>
   )

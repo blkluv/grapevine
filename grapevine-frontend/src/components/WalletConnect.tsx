@@ -1,8 +1,13 @@
 import { useWallet } from '@/context/WalletContext';
+import { useFarcaster } from '@/context/FarcasterContext';
 import { truncateAddress } from '@/services/auth';
 
 export function WalletConnect() {
   const { isConnected, isConnecting, address, connect, disconnect } = useWallet();
+  const { isInMiniApp, user } = useFarcaster();
+
+  // Show Farcaster username if in mini app, otherwise truncated address
+  const displayName = isInMiniApp && user?.username ? `@${user.username}` : truncateAddress(address || '');
 
   if (isConnecting) {
     return (
@@ -21,7 +26,7 @@ export function WalletConnect() {
       <div className="flex items-center gap-3">
         <div className="bg-white border-2 border-t-[#808080] border-l-[#808080] border-b-white border-r-white px-5 py-3 shadow-[inset_2px_2px_3px_rgba(0,0,0,0.1)]">
           <div className="text-sm font-black uppercase tracking-wide">
-            {truncateAddress(address)}
+            {displayName}
           </div>
         </div>
         <button

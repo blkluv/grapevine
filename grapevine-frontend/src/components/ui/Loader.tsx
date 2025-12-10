@@ -24,7 +24,7 @@ const sizeMap = {
 export const Loader: React.FC<LoaderProps> = ({
   size = 'md',
   className,
-  color = '#00f0ff', // Aquamarine - matches MusicPlayer
+  color = 'var(--accent-aqua)', // Aquamarine - matches MusicPlayer
 }) => {
   const pixelSize = sizeMap[size];
 

@@ -19,6 +19,12 @@ export default {
           foreground: 'var(--bw)',
         },
 
+        // Accent colors (centralized)
+        accent: {
+          aqua: 'var(--accent-aqua)',
+          orange: 'var(--accent-orange)',
+        },
+
         // Pinata brand colors (preserved)
         pinata: {
           brandPartyPurple: "#6D57FF",

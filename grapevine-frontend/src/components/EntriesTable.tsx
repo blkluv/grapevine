@@ -16,7 +16,7 @@ const styles = {
   thLast: 'text-left p-4 font-black uppercase text-xs tracking-wide font-mono',
   trEven: 'bg-white',
   trOdd: 'bg-gray-50',
-  trHover: 'hover:bg-[#00f0ff]/20 transition-colors',
+  trHover: 'hover:bg-accent-aqua/20 transition-colors',
   td: 'p-4 border-r-[2px] border-black font-mono',
   tdLast: 'p-4 text-sm whitespace-nowrap relative group font-mono',
   tdBorder: 'border-b-[2px] border-black cursor-pointer',

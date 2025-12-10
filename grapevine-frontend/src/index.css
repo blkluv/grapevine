@@ -45,6 +45,10 @@
   --color-error: var(--error);
   --color-info: var(--info);
 
+  /* ===== Accent Colors ===== */
+  --color-accent-aqua: var(--accent-aqua);
+  --color-accent-orange: var(--accent-orange);
+
   /* ===== Win95 Theme Colors ===== */
   --color-win-gray: #c0c0c0;
   --color-win-gray-light: #dfdfdf;
@@ -105,6 +109,10 @@
   --warning: #ffff00;
   --error: #ff0000;
   --info: #0000ff;
+
+  /* ===== Accent Colors ===== */
+  --accent-aqua: #00f0ff;
+  --accent-orange: #ff6b35;
 
   /* ===== Typography ===== */
   --base-font-weight: 700;
@@ -369,7 +377,7 @@ body {
 }
 
 .neobrutalism-button[data-variant="danger"] {
-  --neobrutalism-btn-bg: #ff6b35;
+  --neobrutalism-btn-bg: var(--accent-orange);
   --neobrutalism-btn-fg: #ffffff;
   --neobrutalism-btn-border: #000000;
 }

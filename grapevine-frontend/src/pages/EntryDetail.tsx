@@ -98,7 +98,7 @@ const themeStyles = {
   },
   neobrutalism: {
     backButton: 'px-6 py-3 bg-white border-[2px] border-black font-mono font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all',
-    titleLabel: 'px-6 py-3 bg-[#00f0ff] border-[2px] border-black font-mono font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+    titleLabel: 'px-6 py-3 bg-accent-aqua border-[2px] border-black font-mono font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
     card: 'bg-white border-[2px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-12 text-center',
     infoCard: 'bg-white border-[2px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8',
     contentCard: 'bg-white border-[2px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6',

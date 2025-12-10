@@ -7,11 +7,11 @@ import { useWallet } from '@/context/WalletContext'
 // Neobrutalism styles
 const styles = {
   container: 'bg-white p-3 select-none border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]',
-  display: 'bg-[#00f0ff] border-4 border-black mb-3 p-3 relative h-20 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+  display: 'bg-accent-aqua border-4 border-black mb-3 p-3 relative h-20 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
   displayText: 'text-black font-mono font-bold',
   visualizer: 'h-10 bg-white border-4 border-black mb-3 flex items-end gap-1 px-2 pb-2 shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)]',
   visualizerBar: 'w-full bg-black border-2 border-black transition-all duration-75',
-  controlButton: 'w-8 h-8 bg-[#ff6b35] border-4 border-black flex items-center justify-center hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+  controlButton: 'w-8 h-8 bg-accent-orange border-4 border-black flex items-center justify-center hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
   volumeBar: 'w-20 h-3 bg-white border-3 border-black overflow-hidden shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.3)]',
   volumeFill: 'h-full bg-black',
   iconColor: 'text-black',

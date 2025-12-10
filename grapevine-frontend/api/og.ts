@@ -56,12 +56,10 @@ export default async function handler(request: Request) {
     }
     let html = await indexResponse.text()
 
-    // Remove existing OG/Twitter/Frame meta tags to avoid duplicates
+    // Remove existing OG/Twitter meta tags to avoid duplicates (keep fc:miniapp for mini app launches)
     html = html.replace(/<meta\s+property="og:[^"]*"\s*[^>]*>/gi, '')
     html = html.replace(/<meta\s+property="twitter:[^"]*"\s*[^>]*>/gi, '')
     html = html.replace(/<meta\s+name="twitter:[^"]*"\s*[^>]*>/gi, '')
-    html = html.replace(/<meta\s+property="fc:frame[^"]*"\s*[^>]*>/gi, '')
-    html = html.replace(/<meta\s+name="fc:miniapp"\s*[^>]*>/gi, '')
 
     // Generate OG tags
     const ogTags = generateOgTags({ title, description, image, url: pageUrl })
@@ -115,12 +113,5 @@ function generateOgTags({ title, description, image, url }: {
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:description" content="${safeDescription}">
-  <meta name="twitter:image" content="${image}">
-
-  <!-- Farcaster Frame -->
-  <meta property="fc:frame" content="vNext">
-  <meta property="fc:frame:image" content="${image}">
-  <meta property="fc:frame:button:1" content="Open in Grapevine">
-  <meta property="fc:frame:button:1:action" content="link">
-  <meta property="fc:frame:button:1:target" content="${url}">`
+  <meta name="twitter:image" content="${image}">`
 }

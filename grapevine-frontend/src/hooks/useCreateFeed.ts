@@ -13,12 +13,16 @@ export type CreateFeedFormInput = CreateFeedInput;
 export function useCreateFeed() {
   const queryClient = useQueryClient();
   const { address } = useWallet();
-  const { grapevine } = useGrapevine();
+  const { grapevine, isWalletReady } = useGrapevine();
 
   return useMutation({
     mutationFn: async (data: CreateFeedFormInput) => {
       if (!address) {
         throw new Error('Wallet not connected');
+      }
+
+      if (!isWalletReady) {
+        throw new Error('Wallet is still initializing. Please wait a moment and try again.');
       }
 
       if (!grapevine) return;

@@ -15,7 +15,7 @@ export interface CreateEntryInput {
 export function useCreateEntry() {
   const queryClient = useQueryClient();
   const { address } = useWallet();
-  const { grapevine } = useGrapevine();
+  const { grapevine, isWalletReady } = useGrapevine();
 
   return useMutation({
     mutationFn: async ({ feedId, data }: CreateEntryInput) => {
@@ -24,10 +24,16 @@ export function useCreateEntry() {
       console.log('[useCreateEntry] - data:', data);
       console.log('[useCreateEntry] - address:', address);
       console.log('[useCreateEntry] - grapevine SDK:', grapevine);
+      console.log('[useCreateEntry] - isWalletReady:', isWalletReady);
 
       if (!address) {
         console.error('[useCreateEntry] ❌ Wallet not connected');
         throw new Error('Wallet not connected');
+      }
+
+      if (!isWalletReady) {
+        console.error('[useCreateEntry] ❌ Wallet still initializing');
+        throw new Error('Wallet is still initializing. Please wait a moment and try again.');
       }
 
       if (!grapevine) {

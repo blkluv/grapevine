@@ -148,8 +148,93 @@ export default function UserProfile() {
     )
   }
 
-  // Error state for wallet
+  // Error state for wallet - but handle "own profile doesn't exist yet" case
   if (walletError || !walletData) {
+    // If viewing own profile and wallet doesn't exist yet, show create feed prompt
+    if (isOwnProfile && currentUserAddress) {
+      return (
+        <div className="space-y-8">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              onClick={() => navigate(backPath)}
+              variant={themeKey === 'modern' ? 'ghost' : 'secondary'}
+              size={themeKey === 'modern' ? 'md' : 'lg'}
+              className={themeKey === 'modern' ? 'hover:bg-gray-800' : ''}
+            >
+              ← Back
+            </Button>
+          </div>
+
+          {/* Welcome Card */}
+          <div className={styles.userInfoCard}>
+            <div className="flex items-start gap-4 flex-wrap">
+              {/* Farcaster Avatar (only in mini app) */}
+              {isInMiniApp && farcasterUser?.pfpUrl && (
+                <div className="flex-shrink-0">
+                  <img
+                    src={farcasterUser.pfpUrl}
+                    alt={farcasterUser.username || 'Profile'}
+                    className="w-20 h-20 border-4 border-black"
+                  />
+                </div>
+              )}
+
+              <div className="flex-1 min-w-0">
+                {/* This is you badge */}
+                <div className="inline-block bg-green-200 text-green-800 px-3 py-1 border-2 border-black font-mono text-xs font-bold uppercase mb-3">
+                  This is you
+                </div>
+
+                {/* Farcaster Username */}
+                {isInMiniApp && farcasterUser?.username && (
+                  <div className="mb-2">
+                    <button
+                      onClick={() => sdk.actions.openUrl(`https://warpcast.com/${farcasterUser.username}`)}
+                      className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-mono font-bold cursor-pointer"
+                    >
+                      <span>@{farcasterUser.username}</span>
+                      <span className="text-xs">↗</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Wallet Address */}
+                <h1 className={styles.userName}>
+                  {formatWalletAddress(currentUserAddress)}
+                </h1>
+
+                <div className={themeKey === 'modern' ? "flex items-center mb-3" : "font-mono text-sm mb-3"}>
+                  <span className={styles.walletLabel}>WALLET: </span>
+                  <span className={styles.walletValue}>
+                    {currentUserAddress}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Get Started Section */}
+          <div className={styles.emptyStateCard}>
+            <div className={styles.emptyStateTitle}>
+              WELCOME TO GRAPEVINE
+            </div>
+            <p className={styles.emptyStateText + ' mb-6'}>
+              You haven't created any feeds yet. Create your first feed to start monetizing your content!
+            </p>
+            <Button
+              onClick={() => navigate('/')}
+              variant="primary"
+              size="lg"
+            >
+              Create Your First Feed
+            </Button>
+          </div>
+        </div>
+      )
+    }
+
+    // Otherwise show the regular error
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.errorCard}>

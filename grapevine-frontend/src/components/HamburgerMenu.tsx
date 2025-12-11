@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useCategories } from '@/hooks/useCategories'
 import { CategoriesSidebarView } from '@/components/CategoriesSidebar'
+import { useFarcaster } from '@/context/FarcasterContext'
 import { UserPill } from '@privy-io/react-auth/ui'
 import { cn } from '@/lib/utils'
 
@@ -25,6 +26,7 @@ interface HamburgerMenuViewProps {
   categories: any[]
   categoriesLoading: boolean
   walletComponent?: ReactNode
+  isFarcasterMode?: boolean
 }
 
 export function HamburgerMenuView({
@@ -34,7 +36,10 @@ export function HamburgerMenuView({
   categories,
   categoriesLoading,
   walletComponent,
+  isFarcasterMode,
 }: HamburgerMenuViewProps) {
+  // Don't render Privy's UserPill in Farcaster mode
+  const showUserPill = !isFarcasterMode && !walletComponent
   return (
     <>
       {/* Hamburger Button - Only visible on mobile */}
@@ -99,7 +104,8 @@ export function HamburgerMenuView({
         <div className={styles.walletSection}>
           <div className={styles.walletContent}>
             {/* Wallet Connection */}
-            {walletComponent || <UserPill />}
+            {walletComponent}
+            {showUserPill && <UserPill />}
           </div>
         </div>
 
@@ -120,7 +126,9 @@ export function HamburgerMenuView({
 export function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories()
+  const { isInMiniApp, isSDKReady } = useFarcaster()
   const categories = categoriesData || []
+  const isFarcasterMode = isSDKReady && isInMiniApp
 
   return (
     <HamburgerMenuView
@@ -129,6 +137,7 @@ export function HamburgerMenu() {
       onClose={() => setIsOpen(false)}
       categories={categories}
       categoriesLoading={categoriesLoading}
+      isFarcasterMode={isFarcasterMode}
     />
   )
 }

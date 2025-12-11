@@ -276,18 +276,21 @@ export function UploadEntryModalView({
             </div>
           )}
 
-          {/* Expiration Date/Time (only shown if not free and in dev mode) */}
-          {!isFree && import.meta.env.VITE_ENV === 'develop' && (
+          {/* Expiration Date/Time (only shown if not free) */}
+          {!isFree && (
             <div>
-              <label className={styles.checkboxLabel}>
+              <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
+                  id="has-expiration"
                   checked={hasExpiration}
                   onChange={(e) => onHasExpirationChange(e.target.checked)}
                   className={styles.checkbox}
                 />
-                <span className={styles.checkboxText}>Set expiration (becomes free after)</span>
-              </label>
+                <label htmlFor="has-expiration" className={cn(styles.checkboxText, 'cursor-pointer')}>
+                  Set expiration (becomes free after)
+                </label>
+              </div>
 
               {hasExpiration && (
                 <div className="mt-3 space-y-3">

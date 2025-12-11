@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
 import { UploadEntryModal } from '@/components/UploadEntryModal'
@@ -203,6 +203,23 @@ export default function FeedEntries() {
     }
   }
 
+  // Refetch entries when an entry expires
+  const handleEntryExpire = useCallback(async () => {
+    if (!feedId) return
+
+    try {
+      const currentPageToken = pageTokens[pageTokens.length - 1]
+      const entriesData = await grapevineApiClient.getEntries(feedId, {
+        page_size: '20',
+        ...(currentPageToken && { page_token: currentPageToken })
+      })
+      setEntries(entriesData.data || [])
+      setPagination(entriesData.pagination)
+    } catch (err) {
+      console.error('Failed to refetch entries:', err)
+    }
+  }, [feedId, pageTokens])
+
   return (
     <div>
       {/* Back Button and Feed Title */}
@@ -273,6 +290,7 @@ export default function FeedEntries() {
             onUploadClick={() => setIsUploadModalOpen(true)}
             onEntryClick={(entryId) => navigate(`/feeds/${feedId}/entries/${entryId}?from=${fromEncoded || encodeURIComponent('/')}`)}
             onBuyClick={(entryId) => navigate(`/feeds/${feedId}/entries/${entryId}?from=${fromEncoded || encodeURIComponent('/')}`)}
+            onEntryExpire={handleEntryExpire}
           />
 
           {/* Pagination */}

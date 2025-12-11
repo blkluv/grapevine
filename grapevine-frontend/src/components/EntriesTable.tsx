@@ -1,4 +1,5 @@
 import { Button, ArrowWrapper } from '@/components/ui'
+import { ExpiryCountdown } from '@/components/ExpiryCountdown'
 import { cn } from '@/lib/utils'
 import type { GrapevineEntry } from '@/services/grapevineApi'
 
@@ -45,6 +46,8 @@ export interface EntriesTableProps {
   onBuyClick?: (entryId: string) => void
   /** Show arrow animation on first row's buy button */
   highlightFirstRow?: boolean
+  /** Callback when an entry's expiry timer reaches zero */
+  onEntryExpire?: () => void
 }
 
 export function EntriesTable({
@@ -54,6 +57,7 @@ export function EntriesTable({
   onEntryClick,
   onBuyClick,
   highlightFirstRow = true,
+  onEntryExpire,
 }: EntriesTableProps) {
   return (
     <div className={styles.tableContainer}>
@@ -119,9 +123,19 @@ export function EntriesTable({
                     </div>
                   </td>
                   <td className={cn(styles.td, 'whitespace-nowrap')}>
-                    <span className={entry.is_free ? styles.priceBadgeFree : styles.priceBadgePaid}>
-                      {formatPrice(entry.price, entry.asset, entry.is_free)}
-                    </span>
+                    <div className="flex flex-col gap-1">
+                      <span className={entry.is_free ? styles.priceBadgeFree : styles.priceBadgePaid}>
+                        {formatPrice(entry.price, entry.asset, entry.is_free)}
+                      </span>
+                      {entry.expires_at && !entry.is_free && (
+                        <ExpiryCountdown
+                          expiresAt={entry.expires_at}
+                          onExpire={onEntryExpire}
+                          compact
+                          className="text-xs font-mono"
+                        />
+                      )}
+                    </div>
                   </td>
                   <td className={styles.td}>
                     {entry.tags && entry.tags.length > 0 ? (

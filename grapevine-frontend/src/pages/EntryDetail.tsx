@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
 import { useX402Payment } from '@/hooks/useX402Payment'
@@ -9,6 +9,7 @@ import { useDeleteEntry } from '@/hooks/useDeleteEntry'
 import { grapevineApiClient, type GrapevineEntry } from '@/services/grapevineApi'
 import { Button, ArrowWrapper, Loader } from '@/components/ui'
 import { DeleteEntryDialog } from '@/components/DeleteEntryDialog'
+import { ExpiryCountdown } from '@/components/ExpiryCountdown'
 import { cn } from '@/lib/utils'
 import { trackEvent, AnalyticsEvents } from '@/lib/analytics'
 import sdk from '@farcaster/miniapp-sdk'
@@ -162,9 +163,6 @@ export default function EntryDetail() {
   // Ref for the purchase box for testing
   const purchaseBoxRef = useRef<HTMLDivElement>(null)
 
-  // Countdown timer state for expires_at
-  const [countdown, setCountdown] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null)
-
   // Check if the user has already purchased this entry
   const { data: hasPurchased, isLoading: isCheckingPurchase } = useHasPurchasedEntry(entryId)
 
@@ -201,47 +199,17 @@ export default function EntryDetail() {
   const themeKey = ['modern', 'neobrutalism'].includes(currentTheme) ? currentTheme : 'default'
   const styles = themeStyles[themeKey as keyof typeof themeStyles]
 
-  // Countdown timer effect for expires_at
-  useEffect(() => {
-    if (!entry?.expires_at) {
-      setCountdown(null)
-      return
+  // Refetch entry data function
+  const refetchEntry = useCallback(async () => {
+    if (!feedId || !entryId) return
+
+    try {
+      const entryData = await grapevineApiClient.getEntry(feedId, entryId)
+      setEntry(entryData)
+    } catch (err) {
+      console.error('Failed to refetch entry:', err)
     }
-
-    const expiresAtMs = entry.expires_at * 1000
-    const now = Date.now()
-
-    // If already expired, no countdown needed
-    if (expiresAtMs <= now) {
-      setCountdown(null)
-      return
-    }
-
-    const updateCountdown = () => {
-      const now = Date.now()
-      const diff = expiresAtMs - now
-
-      if (diff <= 0) {
-        setCountdown(null)
-        return
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-      setCountdown({ days, hours, minutes, seconds })
-    }
-
-    // Update immediately
-    updateCountdown()
-
-    // Then update every second
-    const interval = setInterval(updateCountdown, 1000)
-
-    return () => clearInterval(interval)
-  }, [entry?.expires_at])
+  }, [feedId, entryId])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -836,32 +804,15 @@ export default function EntryDetail() {
             </div>
 
             {/* Countdown Timer for Expiration */}
-            {countdown && entry.expires_at && (
+            {entry.expires_at && !entry.is_free && (
               <div className="mt-6 p-4 border-[2px] border-black bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className={styles.infoLabel}>
                   Becomes Free In
                 </h3>
-                <div className="flex gap-4 mt-2">
-                  <div className="text-center">
-                    <p className="text-2xl font-black font-mono">{countdown.days}</p>
-                    <p className="text-xs font-mono uppercase">Days</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-black font-mono">{countdown.hours.toString().padStart(2, '0')}</p>
-                    <p className="text-xs font-mono uppercase">Hours</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-black font-mono">{countdown.minutes.toString().padStart(2, '0')}</p>
-                    <p className="text-xs font-mono uppercase">Min</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-black font-mono">{countdown.seconds.toString().padStart(2, '0')}</p>
-                    <p className="text-xs font-mono uppercase">Sec</p>
-                  </div>
-                </div>
-                <p className="mt-3 text-sm font-mono text-black/70">
-                  On {new Date(entry.expires_at * 1000).toLocaleString()}
-                </p>
+                <ExpiryCountdown
+                  expiresAt={entry.expires_at}
+                  onExpire={refetchEntry}
+                />
               </div>
             )}
 

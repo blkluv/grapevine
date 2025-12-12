@@ -199,6 +199,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
   // DEBUG LOGGING
   // ============================================
   useEffect(() => {
+    const privyWalletAddress = privyWallets[0]?.address;
+
     console.log('[WalletContext] 🔍 ===== STATE UPDATE =====');
     console.log('[WalletContext] - Mode:', isFarcasterMode ? 'FARCASTER' : 'PRIVY');
     console.log('[WalletContext] - isSDKReady:', isSDKReady);
@@ -210,6 +212,15 @@ export function WalletProvider({ children }: WalletProviderProps) {
       console.log('[WalletContext] - privyReady:', privyReady);
       console.log('[WalletContext] - privyAuthenticated:', privyAuthenticated);
       console.log('[WalletContext] - privyWallets:', privyWallets.length);
+      console.log('[WalletContext] - privyWallet[0].address:', privyWalletAddress);
+
+      // Check for address mismatch
+      if (privyWalletAddress && wagmiAccount.address && privyWalletAddress.toLowerCase() !== wagmiAccount.address.toLowerCase()) {
+        console.warn('[WalletContext] ⚠️ ADDRESS MISMATCH!');
+        console.warn('[WalletContext] - Privy wallet:', privyWalletAddress);
+        console.warn('[WalletContext] - Wagmi account:', wagmiAccount.address);
+        console.warn('[WalletContext] This could cause signature verification to fail!');
+      }
     }
     console.log('[WalletContext] 🎯 FINAL: isConnected:', isConnected, 'address:', address);
     console.log('[WalletContext] ===== END STATE =====');

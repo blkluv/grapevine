@@ -162,7 +162,7 @@ export function EntriesTable({
                           size="sm"
                           noHoverEffect
                         >
-                          Buy
+                          {entry.is_free ? 'View' : 'Buy'}
                         </Button>
                       </ArrowWrapper>
                     ) : (
@@ -175,7 +175,7 @@ export function EntriesTable({
                         size="sm"
                         noHoverEffect
                       >
-                        Buy
+                        {entry.is_free ? 'View' : 'Buy'}
                       </Button>
                     )}
                   </td>

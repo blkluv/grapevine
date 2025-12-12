@@ -103,15 +103,25 @@ export function GrapevineProvider({ children }: GrapevineProviderProps) {
 
   // Debug logging
   useEffect(() => {
+    const privyWalletAddress = privyWallets[0]?.address;
+    const walletClientAccount = walletClient?.account?.address;
+
     console.log('[GrapevineContext] 🔍 ===== STATE =====');
     console.log('[GrapevineContext] - mode:', isFarcasterMode ? 'FARCASTER' : 'PRIVY');
     console.log('[GrapevineContext] - wagmiAccount.isConnected:', wagmiAccount.isConnected);
     console.log('[GrapevineContext] - wagmiAccount.address:', wagmiAccount.address);
+    console.log('[GrapevineContext] - privyWallet.address:', privyWalletAddress);
+    console.log('[GrapevineContext] - walletClient.account:', walletClientAccount);
     console.log('[GrapevineContext] - walletClient:', walletClient ? 'available' : 'null');
     console.log('[GrapevineContext] - isWalletReady:', isWalletReady);
     console.log('[GrapevineContext] - grapevine:', grapevine ? 'initialized' : 'null');
+
+    // Check for address mismatch
+    if (privyWalletAddress && wagmiAccount.address && privyWalletAddress !== wagmiAccount.address) {
+      console.warn('[GrapevineContext] ⚠️ ADDRESS MISMATCH: Privy wallet vs wagmi account!');
+    }
     console.log('[GrapevineContext] ===== END =====');
-  }, [isFarcasterMode, wagmiAccount, walletClient, isWalletReady, grapevine]);
+  }, [isFarcasterMode, wagmiAccount, walletClient, isWalletReady, grapevine, privyWallets]);
 
   const value: GrapevineContextType = {
     grapevine,

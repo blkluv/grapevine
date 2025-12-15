@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '@/context/PageTitleContext'
-import { useX402Payment } from '@/hooks/useX402Payment'
+import { usePayment } from '@/context/PaymentContext'
 import { useToast } from '@/context/ToastContext'
 import { useWallet } from '@/context/WalletContext'
 import { useHasPurchasedEntry } from '@/hooks/useTransactions'
@@ -144,7 +144,7 @@ export default function EntryDetail() {
   const { feedId, entryId } = useParams<{ feedId: string; entryId: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { fetchWithPayment } = useX402Payment()
+  const { fetchWithPayment } = usePayment()
   const { setTitle } = usePageTitle()
   const toast = useToast()
   const { isConnected, signRequest, address } = useWallet()
@@ -731,7 +731,7 @@ export default function EntryDetail() {
                       variant="primary"
                       size="sm"
                     >
-                      Copy Link
+                      Copy x402 Link
                     </Button>
                   )}
                   {isOwner && feedId && entryId && (

@@ -150,16 +150,17 @@ export function UploadEntryModal({ isOpen, onClose, onUpload }: UploadEntryModal
       const base64Content = await fileToBase64(selectedFile);
       console.log('[UploadEntryModal] ✅ File converted to base64');
 
-      // Validate price if not free
-      if (!isFree && (priceUsd === '' || parseFloat(priceUsd) < 0)) {
-        const errorMsg = 'Please enter a valid price in USD for paid entries (0 or greater)';
+      // Validate price if not free (minimum 0.001 USDC)
+      const MIN_PRICE_USD = 0.001;
+      if (!isFree && (priceUsd === '' || parseFloat(priceUsd) < MIN_PRICE_USD)) {
+        const errorMsg = `Please enter a valid price of at least $${MIN_PRICE_USD} USDC`;
         setError(errorMsg);
         toast.error(errorMsg);
         return;
       }
 
-      // Determine if entry should be free: either checkbox is checked OR price is 0
-      const shouldBeFree = isFree || (!isFree && priceUsd !== '' && parseFloat(priceUsd) === 0);
+      // Entry is free only if the checkbox is checked
+      const shouldBeFree = isFree;
 
       const uploadData: CreateEntryInput = {
         content_base64: base64Content,

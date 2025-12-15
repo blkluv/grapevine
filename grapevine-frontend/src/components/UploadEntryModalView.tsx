@@ -262,9 +262,9 @@ export function UploadEntryModalView({
                   value={priceUsd}
                   onChange={(e) => onPriceUsdChange(e.target.value)}
                   className={styles.priceInput}
-                  placeholder="0.00"
-                  min="0"
-                  step="0.01"
+                  placeholder="0.001"
+                  min="0.001"
+                  step="0.001"
                   required={!isFree}
                 />
               </div>

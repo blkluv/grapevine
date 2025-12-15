@@ -3,11 +3,18 @@ import { useFarcaster } from '@/context/FarcasterContext'
 import {UserPill} from '@privy-io/react-auth/ui';
 import type { ReactNode } from 'react';
 
+interface FarcasterUserInfo {
+  username?: string
+  displayName?: string
+  pfpUrl?: string
+}
+
 interface SecondaryNavigationViewProps {
   isConnected: boolean
   address: string | null
   walletComponent?: ReactNode
   isFarcasterMode?: boolean
+  farcasterUser?: FarcasterUserInfo | null
 }
 
 export function SecondaryNavigationView({
@@ -15,6 +22,7 @@ export function SecondaryNavigationView({
   address,
   walletComponent,
   isFarcasterMode,
+  farcasterUser,
 }: SecondaryNavigationViewProps) {
   // Don't render Privy's UserPill in Farcaster mode
   const showUserPill = !isFarcasterMode && !walletComponent
@@ -27,13 +35,28 @@ export function SecondaryNavigationView({
       }
       {walletComponent}
       {showUserPill && <UserPill />}
+      {/* Farcaster user display */}
+      {isFarcasterMode && farcasterUser && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+          {farcasterUser.pfpUrl && (
+            <img
+              src={farcasterUser.pfpUrl}
+              alt={farcasterUser.username || 'User'}
+              className="w-6 h-6 rounded-full border border-black"
+            />
+          )}
+          <span className="text-xs font-black uppercase">
+            {farcasterUser.username || farcasterUser.displayName || 'Connected'}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
 
 export function SecondaryNavigation() {
   const { isConnected, address } = useWallet()
-  const { isInMiniApp, isSDKReady } = useFarcaster()
+  const { isInMiniApp, isSDKReady, user } = useFarcaster()
   const isFarcasterMode = isSDKReady && isInMiniApp
 
   return (
@@ -41,6 +64,7 @@ export function SecondaryNavigation() {
       isConnected={isConnected}
       address={address}
       isFarcasterMode={isFarcasterMode}
+      farcasterUser={user}
     />
   )
 }

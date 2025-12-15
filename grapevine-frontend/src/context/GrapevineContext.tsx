@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { useAccount, useWalletClient as useWagmiWalletClient } from 'wagmi';
-import { useWallets } from '@privy-io/react-auth';
+import { useAccount } from 'wagmi';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { createWalletClient, custom, type WalletClient } from 'viem';
 import { base, baseSepolia } from 'viem/chains';
 import { useGrapevine as useGrapevineSDK } from '@pinata/grapevine-sdk/dist/react';
 import type { GrapevineClient } from '@pinata/grapevine-sdk/dist/client';
-import { useFarcaster } from './FarcasterContext';
 
 export interface GrapevineContextType {
   grapevine: GrapevineClient | null;
@@ -13,52 +12,47 @@ export interface GrapevineContextType {
   isWalletReady: boolean;
 }
 
-const GrapevineContext = createContext<GrapevineContextType | undefined>(undefined);
+// Export the context so FarcasterGrapevineProvider can use the same context
+export const GrapevineContext = createContext<GrapevineContextType | undefined>(undefined);
 
 interface GrapevineProviderProps {
   children: ReactNode;
 }
 
+// Privy-only GrapevineProvider - creates wallet client from Privy's provider
 export function GrapevineProvider({ children }: GrapevineProviderProps) {
-  const { isInMiniApp, isSDKReady } = useFarcaster();
   const wagmiAccount = useAccount();
+  const { ready: privyReady, authenticated: privyAuthenticated } = usePrivy();
   const { wallets: privyWallets } = useWallets();
 
-  // Wagmi wallet client - used in Farcaster mode where wagmi handles the connection
-  const { data: wagmiWalletClient, isLoading: isWagmiWalletClientLoading } = useWagmiWalletClient();
-
-  // State to hold the wallet client we create from Privy's provider (for Privy mode only)
-  const [privyWalletClient, setPrivyWalletClient] = useState<WalletClient | null>(null);
-  const [isPrivyWalletClientLoading, setIsPrivyWalletClientLoading] = useState(false);
-
-  // Determine if we're in Farcaster mode
-  const isFarcasterMode = isSDKReady && isInMiniApp;
+  // State for wallet client created from Privy's provider
+  const [walletClient, setWalletClient] = useState<WalletClient | null>(null);
+  const [isWalletClientLoading, setIsWalletClientLoading] = useState(false);
 
   // Get network from environment variable
   const network = import.meta.env.VITE_NETWORK as 'testnet' | 'mainnet';
   const validNetwork = network === 'mainnet' ? 'mainnet' : 'testnet';
   const chain = validNetwork === 'mainnet' ? base : baseSepolia;
 
-  // In Privy mode: Create wallet client from Privy's wallet provider
-  // This ensures we use Privy's wallet management rather than relying on wagmi's useWalletClient
-  // which can have sync issues with Privy's auth state
+  // Create wallet client from Privy's wallet provider
+  // Only do this when user is actually authenticated to avoid triggering MetaMask popup
   useEffect(() => {
-    // Skip if in Farcaster mode - wagmi handles it there
-    if (isFarcasterMode) {
-      return;
-    }
+    const setupWalletClient = async () => {
+      // Don't attempt to get provider until Privy is ready AND user is authenticated
+      if (!privyReady || !privyAuthenticated) {
+        setWalletClient(null);
+        return;
+      }
 
-    const setupPrivyWalletClient = async () => {
-      // Get the first connected Privy wallet
       const privyWallet = privyWallets[0];
 
       if (!privyWallet) {
-        setPrivyWalletClient(null);
+        setWalletClient(null);
         return;
       }
 
       try {
-        setIsPrivyWalletClientLoading(true);
+        setIsWalletClientLoading(true);
 
         // Get the EIP-1193 provider from the Privy wallet
         const provider = await privyWallet.getEthereumProvider();
@@ -70,36 +64,27 @@ export function GrapevineProvider({ children }: GrapevineProviderProps) {
           transport: custom(provider),
         });
 
-        setPrivyWalletClient(client);
+        setWalletClient(client);
       } catch (error) {
-        console.error('[GrapevineContext] Failed to create wallet client from Privy:', error);
-        setPrivyWalletClient(null);
+        console.error('[GrapevineContext] Failed to create wallet client:', error);
+        setWalletClient(null);
       } finally {
-        setIsPrivyWalletClientLoading(false);
+        setIsWalletClientLoading(false);
       }
     };
 
-    setupPrivyWalletClient();
-  }, [isFarcasterMode, privyWallets, chain]);
+    setupWalletClient();
+  }, [privyReady, privyAuthenticated, privyWallets, chain]);
 
-  // Determine which wallet client to use:
-  // - In Farcaster mode: use wagmi's wallet client (from the Farcaster connector)
-  // - In Privy mode: use the wallet client we created from Privy's provider
-  const walletClient = isFarcasterMode ? wagmiWalletClient : privyWalletClient;
-  const isWalletClientLoading = isFarcasterMode ? isWagmiWalletClientLoading : isPrivyWalletClientLoading;
-
-  // Initialize Grapevine SDK with the appropriate wallet client
+  // Initialize Grapevine SDK
   const grapevine = useGrapevineSDK({
     walletClient: walletClient ?? undefined,
     network: validNetwork,
     debug: import.meta.env.DEV,
   });
 
-  // Wallet is ready when:
-  // - We have a connected account AND
-  // - We have a wallet client AND
-  // - The wallet client is not loading
-  const isWalletReady = wagmiAccount.isConnected && !!walletClient && !isWalletClientLoading;
+  // Wallet is ready when authenticated, connected, and wallet client is available
+  const isWalletReady = privyAuthenticated && wagmiAccount.isConnected && !!walletClient && !isWalletClientLoading;
 
   // Debug logging
   useEffect(() => {
@@ -107,7 +92,8 @@ export function GrapevineProvider({ children }: GrapevineProviderProps) {
     const walletClientAccount = walletClient?.account?.address;
 
     console.log('[GrapevineContext] 🔍 ===== STATE =====');
-    console.log('[GrapevineContext] - mode:', isFarcasterMode ? 'FARCASTER' : 'PRIVY');
+    console.log('[GrapevineContext] - privyReady:', privyReady);
+    console.log('[GrapevineContext] - privyAuthenticated:', privyAuthenticated);
     console.log('[GrapevineContext] - wagmiAccount.isConnected:', wagmiAccount.isConnected);
     console.log('[GrapevineContext] - wagmiAccount.address:', wagmiAccount.address);
     console.log('[GrapevineContext] - privyWallet.address:', privyWalletAddress);
@@ -118,10 +104,10 @@ export function GrapevineProvider({ children }: GrapevineProviderProps) {
 
     // Check for address mismatch
     if (privyWalletAddress && wagmiAccount.address && privyWalletAddress !== wagmiAccount.address) {
-      console.warn('[GrapevineContext] ⚠️ ADDRESS MISMATCH: Privy wallet vs wagmi account!');
+      console.warn('[GrapevineContext] ⚠️ ADDRESS MISMATCH!');
     }
     console.log('[GrapevineContext] ===== END =====');
-  }, [isFarcasterMode, wagmiAccount, walletClient, isWalletReady, grapevine, privyWallets]);
+  }, [privyReady, privyAuthenticated, wagmiAccount, walletClient, isWalletReady, grapevine, privyWallets]);
 
   const value: GrapevineContextType = {
     grapevine,

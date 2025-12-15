@@ -1,13 +1,25 @@
-import { http } from 'wagmi';
-import { createConfig } from '@privy-io/wagmi';
+import { http, createConfig } from 'wagmi';
+import { createConfig as createPrivyConfig } from '@privy-io/wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
-import { farcasterMiniApp as miniAppConnector } from '@farcaster/miniapp-wagmi-connector';
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
 
-export const wagmiConfig = createConfig({
+// Privy mode: No connectors needed, Privy injects its own
+// ssr: true prevents wagmi from auto-detecting/connecting wallets on initial load
+export const privyWagmiConfig = createPrivyConfig({
   chains: [base, baseSepolia],
   transports: {
     [base.id]: http(),
     [baseSepolia.id]: http(),
   },
-  connectors: [miniAppConnector()],
+  ssr: true,
+});
+
+// Farcaster mode: Use Farcaster connector, no Privy
+export const farcasterWagmiConfig = createConfig({
+  chains: [base, baseSepolia],
+  transports: {
+    [base.id]: http(),
+    [baseSepolia.id]: http(),
+  },
+  connectors: [farcasterMiniApp()],
 });

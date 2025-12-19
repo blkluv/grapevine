@@ -50,8 +50,6 @@ PINATA_GATEWAY_HOST=your_gateway.mypinata.cloud
 X402_PAY_TO_ADDRESS=your_wallet_address
 X402_NETWORK=base-sepolia  # or 'base' for mainnet
 X402_FACILITATOR_URL=https://x402.org/facilitator
-CDP_API_KEY_ID=your_cdp_api_key_id
-CDP_API_KEY_SECRET=your_cdp_api_key_secret
 ```
 
 See [.env.example](.env.example) for all available configuration options.

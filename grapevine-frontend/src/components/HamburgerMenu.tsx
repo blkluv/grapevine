@@ -19,6 +19,12 @@ const styles = {
   strokeColor: 'currentColor'
 }
 
+interface FarcasterUserInfo {
+  username?: string
+  displayName?: string
+  pfpUrl?: string
+}
+
 interface HamburgerMenuViewProps {
   isOpen: boolean
   onOpen: () => void
@@ -27,6 +33,7 @@ interface HamburgerMenuViewProps {
   categoriesLoading: boolean
   walletComponent?: ReactNode
   isFarcasterMode?: boolean
+  farcasterUser?: FarcasterUserInfo | null
 }
 
 export function HamburgerMenuView({
@@ -37,6 +44,7 @@ export function HamburgerMenuView({
   categoriesLoading,
   walletComponent,
   isFarcasterMode,
+  farcasterUser,
 }: HamburgerMenuViewProps) {
   // Don't render Privy's UserPill in Farcaster mode
   const showUserPill = !isFarcasterMode && !walletComponent
@@ -106,6 +114,21 @@ export function HamburgerMenuView({
             {/* Wallet Connection */}
             {walletComponent}
             {showUserPill && <UserPill />}
+            {/* Farcaster user display */}
+            {isFarcasterMode && farcasterUser && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+                {farcasterUser.pfpUrl && (
+                  <img
+                    src={farcasterUser.pfpUrl}
+                    alt={farcasterUser.username || 'User'}
+                    className="w-6 h-6 rounded-full border border-black"
+                  />
+                )}
+                <span className="text-xs font-black uppercase">
+                  {farcasterUser.username || farcasterUser.displayName || 'Connected'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -126,7 +149,7 @@ export function HamburgerMenuView({
 export function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories()
-  const { isInMiniApp, isSDKReady } = useFarcaster()
+  const { isInMiniApp, isSDKReady, user } = useFarcaster()
   const categories = categoriesData || []
   const isFarcasterMode = isSDKReady && isInMiniApp
 
@@ -138,6 +161,7 @@ export function HamburgerMenu() {
       categories={categories}
       categoriesLoading={categoriesLoading}
       isFarcasterMode={isFarcasterMode}
+      farcasterUser={user}
     />
   )
 }

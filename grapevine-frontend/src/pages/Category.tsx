@@ -119,7 +119,7 @@ export default function Category() {
         <>
           <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
             {feeds.map((feed) => (
-              <FeedCard key={feed.id} feed={feed} />
+              <FeedCard key={feed.id} feed={feed} showCopyLink={true} />
             ))}
           </div>
 

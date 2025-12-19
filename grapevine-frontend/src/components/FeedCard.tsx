@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import type { Feed, TrendingFeed, PopularFeed } from '@pinata/grapevine-sdk/dist/types'
 import { cn } from '@/lib/utils'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, Link, Check } from 'lucide-react'
 import { useWallet } from '@/context/WalletContext'
 import robot1 from '@/assets/img/robots/1.avif'
 import robot2 from '@/assets/img/robots/2.avif'
@@ -44,6 +45,7 @@ interface NeoBrutalistFeedCardProps {
   onEdit?: (feed: AnyFeed) => void
   showDelete?: boolean
   showEdit?: boolean
+  showCopyLink?: boolean
   disableNavigation?: boolean
   compact?: boolean
   expanded?: boolean // When true, removes aspect-square and shows full description
@@ -65,6 +67,7 @@ export function FeedCard({
   onEdit,
   showDelete = false,
   showEdit = false,
+  showCopyLink = false,
   disableNavigation = false,
   compact = false,
   expanded = false
@@ -72,6 +75,7 @@ export function FeedCard({
   const navigate = useNavigate()
   const location = useLocation()
   const { address } = useWallet()
+  const [linkCopied, setLinkCopied] = useState(false)
 
   // Get derived values from different feed type variants
   const feedName = getFeedName(feed)
@@ -115,8 +119,20 @@ export function FeedCard({
     }
   }
 
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const feedUrl = `${window.location.origin}/feeds/${feed.id}/entries`
+    try {
+      await navigator.clipboard.writeText(feedUrl)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy link:', err)
+    }
+  }
+
   // Remove aspect-square when expanded or when action buttons are shown
-  const hasActionButtons = showEdit || showDelete
+  const hasActionButtons = showEdit || showDelete || showCopyLink
 
   return (
     <div
@@ -210,9 +226,23 @@ export function FeedCard({
           </div>
         )}
 
-        {/* Action buttons (edit/delete) - only show if needed */}
-        {(showEdit || showDelete) && (
-          <div className="flex gap-2 mt-2 justify-center">
+        {/* Action buttons (edit/delete/copy link) - only show if needed */}
+        {(showEdit || showDelete || showCopyLink) && (
+          <div className="flex gap-2 mt-2 justify-center flex-wrap">
+            {showCopyLink && (
+              <button
+                onClick={handleCopyLink}
+                className={cn(
+                  "font-mono text-xs font-black uppercase px-3 py-1.5 border-2 border-black transition-colors flex items-center gap-1.5",
+                  linkCopied
+                    ? "bg-green-400 border-green-600 text-black"
+                    : "bg-white hover:bg-black hover:text-white"
+                )}
+              >
+                {linkCopied ? <Check size={14} /> : <Link size={14} />}
+                {linkCopied ? 'COPIED!' : 'COPY LINK'}
+              </button>
+            )}
             {showEdit && onEdit && (
               <button
                 onClick={handleEdit}

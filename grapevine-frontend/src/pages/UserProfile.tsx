@@ -6,6 +6,7 @@ import { useFarcaster } from '@/context/FarcasterContext'
 import { useWalletByAddress /*, useWalletStats */ } from '@/hooks/useWalletByAddress'
 import { useUserFeeds } from '@/hooks/useUserFeeds'
 import { FeedCard } from '@/components/FeedCard'
+import { CreateFeedDialog } from '@/components/CreateFeedDialog'
 import { Button, Pagination, Loader } from '@/components/ui'
 import { formatWalletAddress } from '@/lib/utils'
 import sdk from '@farcaster/miniapp-sdk'
@@ -62,6 +63,9 @@ export default function UserProfile() {
   // Pagination state
   const [pageTokens, setPageTokens] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+
+  // Create Feed Dialog state
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
   // Theme detection
   useEffect(() => {
@@ -223,13 +227,19 @@ export default function UserProfile() {
               You haven't created any feeds yet. Create your first feed to start monetizing your content!
             </p>
             <Button
-              onClick={() => navigate('/')}
+              onClick={() => setIsCreateDialogOpen(true)}
               variant="primary"
               size="lg"
             >
               Create Your First Feed
             </Button>
           </div>
+
+          {/* Create Feed Dialog */}
+          <CreateFeedDialog
+            isOpen={isCreateDialogOpen}
+            onClose={() => setIsCreateDialogOpen(false)}
+          />
         </div>
       )
     }
@@ -339,6 +349,7 @@ export default function UserProfile() {
                   <FeedCard
                     key={feed.id}
                     feed={feed}
+                    showCopyLink={true}
                   />
                 )
               )}
@@ -359,13 +370,27 @@ export default function UserProfile() {
             <div className={styles.emptyStateTitle}>
               NO FEEDS FOUND
             </div>
-            <p className={styles.emptyStateText}>
+            <p className={styles.emptyStateText + (isOwnProfile ? ' mb-6' : '')}>
               {isOwnProfile ? "You haven't created any feeds yet." : "This user hasn't created any feeds yet."}
             </p>
+            {isOwnProfile && (
+              <Button
+                onClick={() => setIsCreateDialogOpen(true)}
+                variant="primary"
+                size="lg"
+              >
+                Create Your First Feed
+              </Button>
+            )}
           </div>
         )}
       </div>
 
+      {/* Create Feed Dialog */}
+      <CreateFeedDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+      />
     </div>
   )
 }

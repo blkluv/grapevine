@@ -234,7 +234,7 @@ export default function Feeds() {
               ) : (
                 <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
                   {trendingFeeds.map((feed: any) => (
-                    <FeedCard key={feed.id} feed={feed} compact={true} />
+                    <FeedCard key={feed.id} feed={feed} compact={true} showCopyLink={true} />
                   ))}
                 </div>
               )}
@@ -256,7 +256,7 @@ export default function Feeds() {
               ) : (
                 <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
                   {popularFeeds.map((feed: any) => (
-                    <FeedCard key={feed.id} feed={feed} compact={true} />
+                    <FeedCard key={feed.id} feed={feed} compact={true} showCopyLink={true} />
                   ))}
                 </div>
               )}
@@ -310,6 +310,7 @@ export default function Feeds() {
                         key={feed.id}
                         feed={feed}
                         compact={true}
+                        showCopyLink={true}
                       />
                     )
                   )}

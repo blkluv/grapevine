@@ -289,8 +289,7 @@ export default function EntryDetail() {
 
         // Paid content: need to purchase first if no access
         if (!hasAccess) {
-          const maxPaymentAmount = BigInt(1_000_000)
-          const response = await fetchWithPayment(gatewayUrl, {}, maxPaymentAmount)
+          const response = await fetchWithPayment(gatewayUrl, { method: 'GET' })
 
           if (!response.ok) {
             try {
@@ -383,9 +382,7 @@ export default function EntryDetail() {
           response = await fetch(gatewayUrl)
         } else {
           // Perform x402 payment exchange (GET request)
-          // Set max payment to $1.00 USDC (1000000 in 6 decimal base units)
-          const maxPaymentAmount = BigInt(1_000_000)
-          response = await fetchWithPayment(gatewayUrl, {}, maxPaymentAmount)
+          response = await fetchWithPayment(gatewayUrl, { method: 'GET' })
         }
       }
 

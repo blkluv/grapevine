@@ -1,6 +1,10 @@
 import { getAddress } from 'viem'
 import type { ConnectedWallet } from '@privy-io/react-auth'
 
+// Custom JSON replacer to handle BigInt serialization for logging
+const bigIntReplacer = (_key: string, value: unknown) =>
+  typeof value === 'bigint' ? value.toString() : value
+
 /**
  * Creates a viem-compatible account adapter for Privy wallets.
  *
@@ -123,7 +127,7 @@ export function createPrivyAccount(wallet: ConnectedWallet) {
      */
     signTypedData: async (params: any) => {
       console.log('🔑 [Privy Adapter] signTypedData called')
-      console.log('📋 [Privy Adapter] Full params received:', JSON.stringify(params, null, 2))
+      console.log('📋 [Privy Adapter] Full params received:', JSON.stringify(params, bigIntReplacer, 2))
 
       // Extract only EIP-712 fields
       const { domain, types, primaryType, message } = params
@@ -151,7 +155,7 @@ export function createPrivyAccount(wallet: ConnectedWallet) {
             message,
           }
 
-          console.log('📤 [Privy Adapter] Sending to Privy SDK:', JSON.stringify(typedData, null, 2))
+          console.log('📤 [Privy Adapter] Sending to Privy SDK:', JSON.stringify(typedData, bigIntReplacer, 2))
 
           const signature = await (wallet as any).signTypedData(typedData)
 
@@ -205,11 +209,11 @@ export function createPrivyAccount(wallet: ConnectedWallet) {
             message,
           }
 
-          console.log('📤 [Privy Adapter] Sending to external wallet:', JSON.stringify(typedDataWithDomain, null, 2))
+          console.log('📤 [Privy Adapter] Sending to external wallet:', JSON.stringify(typedDataWithDomain, bigIntReplacer, 2))
 
           const signature = await provider.request({
             method: 'eth_signTypedData_v4',
-            params: [checksumAddress, JSON.stringify(typedDataWithDomain)],
+            params: [checksumAddress, JSON.stringify(typedDataWithDomain, bigIntReplacer)],
           })
 
           console.log('✅ [Privy Adapter] External wallet signature created:', signature)
@@ -226,7 +230,7 @@ export function createPrivyAccount(wallet: ConnectedWallet) {
             message,
           }
 
-          console.log('📤 [Privy Adapter] Sending to Privy SDK:', JSON.stringify(typedData, null, 2))
+          console.log('📤 [Privy Adapter] Sending to Privy SDK:', JSON.stringify(typedData, bigIntReplacer, 2))
 
           // Check if wallet has signTypedData method
           if (typeof (wallet as any).signTypedData !== 'function') {
